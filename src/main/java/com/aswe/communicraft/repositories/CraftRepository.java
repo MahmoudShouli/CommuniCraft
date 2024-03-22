@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CraftRepo extends JpaRepository<CraftEntity, Integer> {
+public interface CraftRepository extends JpaRepository<CraftEntity, Integer> {
     CraftEntity findByCraftName(String craftName);
 }
