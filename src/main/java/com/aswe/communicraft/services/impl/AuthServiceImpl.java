@@ -86,13 +86,9 @@ public class AuthServiceImpl implements AuthService {
                     .authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUserName(), loginDto.getPassword()));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-
             String jwt = jwtUtils.generateTokenFromUserDetails(userDetails);
-
             response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + jwt);
-
             LOGGER.info("Check user credentials and set user authentication.");
             return jwt;
         } catch (Exception e) {

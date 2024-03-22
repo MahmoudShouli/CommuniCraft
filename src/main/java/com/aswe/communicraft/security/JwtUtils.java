@@ -6,6 +6,7 @@ import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,7 +25,9 @@ public class JwtUtils implements UserDetailsService {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtUtils.class);
 
 
+    @Value("${communicraft.app.jwtSecret}")
     private String jwtSecret;
+    @Value("${communicraft.app.jwtExpirationMs}")
     private int jwtExpirationMs;
     private UserRepository userRepository;
     @Autowired
@@ -42,8 +45,12 @@ public class JwtUtils implements UserDetailsService {
         claims.put("email", userDetails.getEmail());
         claims.put("role", userDetails.getRoleEntity().getRoleName());
 
+
+
         byte[] secretKeyBytes = Base64.getDecoder().decode(jwtSecret);
         SecretKey secretKey = new SecretKeySpec(secretKeyBytes, "HmacSHA256");
+
+
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -64,9 +71,9 @@ public class JwtUtils implements UserDetailsService {
     /**
      * Extract userId from jwt token claims based on the jwt secret
      */
-    public int getIdFromJwtToken(String token) {
+    public Integer getIdFromJwtToken(String token) {
         LOGGER.debug("getIdFromJwtToken :: Getting id from token");
-        return Jwts.parserBuilder().setSigningKey(Base64.getDecoder().decode(jwtSecret)).build().parseClaimsJws(token.split("\\|")[0]).getBody().get("id", int.class);
+        return Jwts.parserBuilder().setSigningKey(Base64.getDecoder().decode(jwtSecret)).build().parseClaimsJws(token.split("\\|")[0]).getBody().get("id", Integer.class);
     }
     /**
      * Extract userRole from jwt token claims based on the jwt secret

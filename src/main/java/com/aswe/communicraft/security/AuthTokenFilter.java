@@ -36,8 +36,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain)
             throws ServletException, IOException {
         try {
-
-            if (request.getServletPath().contains("/api/auth")) {
+            if (request.getServletPath().contains("/auth")) {
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -53,7 +52,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             jwt = authHeader.substring(7);
 
             String username = jwtUtils.getUserNameFromJwtToken(jwt);
-            int userId = jwtUtils.getIdFromJwtToken(jwt);
+            Integer userId = jwtUtils.getIdFromJwtToken(jwt);
             String userRole = jwtUtils.getRoleFromJwtToken(jwt);
 
             LOGGER.info("doFilterInternal :: got username = " + username + " with id = " + userId + " and role = " + userRole + " from jwt.");
