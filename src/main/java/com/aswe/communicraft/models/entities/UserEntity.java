@@ -25,13 +25,16 @@ public class UserEntity {
     @Column(nullable = false)
     private String password;
 
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "role_id")
     private RoleEntity roleEntity;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "craft_id")
-    private CraftEntity craft;
+    private CraftEntity craftEntity;
+
+    @Column()
+    private String levelOfSkill;
 
 
 }
