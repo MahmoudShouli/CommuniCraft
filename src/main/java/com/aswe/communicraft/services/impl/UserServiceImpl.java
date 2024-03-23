@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
         }
 
 
-        userRepository.deleteById(id);
+        userRepository.softDeleteById(id);
 
     }
 

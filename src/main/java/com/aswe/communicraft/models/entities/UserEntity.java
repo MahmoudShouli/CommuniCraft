@@ -33,6 +33,9 @@ public class UserEntity {
     @JoinColumn(name = "craft_id")
     private CraftEntity craftEntity;
 
+    @Column(columnDefinition = "boolean default false")
+    private boolean isDeleted;
+
     @Column()
     private String levelOfSkill;
 

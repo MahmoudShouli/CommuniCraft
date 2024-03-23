@@ -21,10 +21,11 @@ public class UserDetailsImpl implements UserDetails {
     private RoleEntity roleEntity;
     private CraftEntity craftEntity;
     private String levelOfSkill;
+    private boolean isDeleted;
     private static Collection<? extends GrantedAuthority> authorities;
 
     public UserDetailsImpl(int id, String email, String name, String password, RoleEntity roleEntity , CraftEntity craftEntity,
-                           String levelOfSkill,Collection<? extends GrantedAuthority> authorities) {
+                           String levelOfSkill, boolean isDeleted,Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = name;
         this.email = email;
@@ -33,6 +34,7 @@ public class UserDetailsImpl implements UserDetails {
         this.roleEntity = roleEntity;
         this.craftEntity = craftEntity;
         this.levelOfSkill= levelOfSkill;
+        this.isDeleted = isDeleted;
         UserDetailsImpl.authorities = authorities;
     }
 
@@ -48,6 +50,7 @@ public class UserDetailsImpl implements UserDetails {
                 userEntity.getRoleEntity(),
                 userEntity.getCraftEntity(),
                 userEntity.getLevelOfSkill(),
+                userEntity.isDeleted(),
                 authorities);
     }
 
@@ -61,7 +64,9 @@ public class UserDetailsImpl implements UserDetails {
                 user.getPassword(),
                 user.getRoleEntity(),
                 user.getCraftEntity(),
+                user.isDeleted(),
                 user.getLevelOfSkill());
+
     }
 
     public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
