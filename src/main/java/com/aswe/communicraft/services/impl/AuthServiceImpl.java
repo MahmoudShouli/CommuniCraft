@@ -9,6 +9,7 @@ import com.aswe.communicraft.models.entities.CraftEntity;
 import com.aswe.communicraft.models.entities.RoleEntity;
 import com.aswe.communicraft.models.entities.UserEntity;
 import com.aswe.communicraft.repositories.CraftRepository;
+import com.aswe.communicraft.repositories.RoleRepository;
 import com.aswe.communicraft.repositories.UserRepository;
 import com.aswe.communicraft.security.JwtUtils;
 import com.aswe.communicraft.security.SecurityConfig;
@@ -34,7 +35,8 @@ public class AuthServiceImpl implements AuthService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthServiceImpl.class);
 
     private final UserRepository userRepository;
-    private final CraftRepository craftRepo;
+    private final CraftRepository craftRepository;
+    private final RoleRepository roleRepository;
     private final Mapper<UserEntity, RegisterDto> mapper;
     private final SecurityConfig securityConfig;
     private final AuthenticationManager authenticationManager;
@@ -52,13 +54,14 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void register(RegisterDto registerDto) throws UserAlreadyFoundException {
         Optional<UserEntity> user = userRepository.findByUserName(registerDto.getUserName());
-        CraftEntity craftEntity = craftRepo.findByCraftName(registerDto.getCraft().getCraftName());
+        CraftEntity craftEntity = craftRepository.findByCraftName(registerDto.getCraft().getCraftName());
+        RoleEntity roleEntity = roleRepository.findByRoleName(registerDto.getRole().getRoleName());
 
 
         if (craftEntity == null) {
             craftEntity = new CraftEntity();
             craftEntity.setCraftName(registerDto.getCraft().getCraftName());
-            craftRepo.save(craftEntity);
+            craftRepository.save(craftEntity);
         }
 
         if (user.isPresent()) {
@@ -66,9 +69,10 @@ public class AuthServiceImpl implements AuthService {
         }
 
         UserEntity userEntity = mapper.toEntity(registerDto, UserEntity.class);
-        userEntity.setCraft(craftEntity);
-        userEntity.setRoleEntity(new RoleEntity(1, "user")); // all new registered set to role user
+        userEntity.setCraftEntity(craftEntity);
+        userEntity.setRoleEntity(roleEntity);
         userEntity.setPassword(securityConfig.passwordEncoder().encode(userEntity.getPassword()));
+        userEntity.setLevelOfSkill(registerDto.getLevelOfSkill());
 
         userRepository.save(userEntity);
     }
