@@ -16,7 +16,7 @@ public class CraftEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int craftId;
 
-    @Column(unique = true,nullable = false)
+    @Column(unique = true)
     private String craftName;
 
 

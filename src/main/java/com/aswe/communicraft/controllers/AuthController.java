@@ -4,6 +4,7 @@ package com.aswe.communicraft.controllers;
 import com.aswe.communicraft.exceptions.UserAlreadyFoundException;
 import com.aswe.communicraft.models.dto.LoginDto;
 import com.aswe.communicraft.models.dto.RegisterDto;
+import com.aswe.communicraft.security.JwtUtils;
 import com.aswe.communicraft.services.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -27,6 +28,7 @@ public class AuthController {
     private final AuthService authService;
 
 
+
     @PostMapping("/register")
     public ResponseEntity<String> register(@Valid @RequestBody RegisterDto registerDto) throws UserAlreadyFoundException {
 
@@ -39,6 +41,6 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto, HttpServletResponse response) {
         String jwt = authService.login(loginDto, response);
         LOGGER.info("log in user with name: " + loginDto.getUserName());
-        return ResponseEntity.ok().body(jwt);
+        return ResponseEntity.ok().body("Here is your token:\n " + jwt);
     }
 }

@@ -1,5 +1,6 @@
 package com.aswe.communicraft.services.impl;
 
+import com.aswe.communicraft.annotations.HidePasswordIfNotAdmin;
 import com.aswe.communicraft.exceptions.NotFoundException;
 import com.aswe.communicraft.mapper.Mapper;
 import com.aswe.communicraft.models.dto.UserDto;
@@ -39,6 +40,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userOptional.get());
     }
 
+    @HidePasswordIfNotAdmin
     @Override
     public UserDto findById(int id) throws NotFoundException {
         UserEntity userEntity = userRepository.findById(id).orElse(null);
@@ -50,9 +52,23 @@ public class UserServiceImpl implements UserService {
 
 
 
-        userEntity.setPassword("**********");
+
 
         return mapper.toDto(userEntity,UserDto.class);
+    }
+
+    @Override
+    public void deleteUser(int id) throws NotFoundException {
+        UserEntity userEntity = userRepository.findById(id).orElse(null);
+
+        if(userEntity == null) {
+            LOGGER.error("This user with id = " + id + " not exist!");
+            throw new NotFoundException("This user with id = " + id + " not exist!");
+        }
+
+
+        userRepository.deleteById(id);
+
     }
 
 
