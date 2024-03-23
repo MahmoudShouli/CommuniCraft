@@ -20,10 +20,11 @@ public class UserDetailsImpl implements UserDetails {
     private String password;
     private RoleEntity roleEntity;
     private CraftEntity craftEntity;
+    private String levelOfSkill;
     private static Collection<? extends GrantedAuthority> authorities;
 
     public UserDetailsImpl(int id, String email, String name, String password, RoleEntity roleEntity , CraftEntity craftEntity,
-                           Collection<? extends GrantedAuthority> authorities) {
+                           String levelOfSkill,Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = name;
         this.email = email;
@@ -31,6 +32,7 @@ public class UserDetailsImpl implements UserDetails {
         this.password = password;
         this.roleEntity = roleEntity;
         this.craftEntity = craftEntity;
+        this.levelOfSkill= levelOfSkill;
         UserDetailsImpl.authorities = authorities;
     }
 
@@ -44,7 +46,8 @@ public class UserDetailsImpl implements UserDetails {
                 userEntity.getUserName(),
                 userEntity.getPassword(),
                 userEntity.getRoleEntity(),
-                userEntity.getCraft(),
+                userEntity.getCraftEntity(),
+                userEntity.getLevelOfSkill(),
                 authorities);
     }
 
@@ -57,7 +60,8 @@ public class UserDetailsImpl implements UserDetails {
                 user.getEmail(),
                 user.getPassword(),
                 user.getRoleEntity(),
-                user.getCraftEntity());
+                user.getCraftEntity(),
+                user.getLevelOfSkill());
     }
 
     public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
