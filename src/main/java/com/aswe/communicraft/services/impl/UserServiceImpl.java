@@ -5,7 +5,7 @@ import com.aswe.communicraft.exceptions.NotFoundException;
 import com.aswe.communicraft.mapper.Mapper;
 import com.aswe.communicraft.models.dto.UserDto;
 import com.aswe.communicraft.models.entities.UserEntity;
-import com.aswe.communicraft.models.enums.Crafts;
+import com.aswe.communicraft.models.enums.Craft;
 import com.aswe.communicraft.repositories.UserRepository;
 import com.aswe.communicraft.security.SecurityConfig;
 import com.aswe.communicraft.services.UserService;
@@ -20,7 +20,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
     private final SecurityConfig securityConfig;
     private final Mapper<UserEntity, UserDto> mapper;
     private final UserRepository userRepository;
@@ -80,19 +80,19 @@ public class UserServiceImpl implements UserService {
         return mapper.toDto(user.get(), UserDto.class);
     }
 
-//    @Override
-//    public List<UserDto> findUsersByCraft(Crafts craft) throws NotFoundException {
-//        List<UserEntity> users = userRepository.findByCraft(craft);
-//
-//        if(users.isEmpty()) {
-//            LOGGER.error("No any user exist in the system!");
-//            throw new NotFoundException("No any user in users table!");
-//        }
-//
-//        return users.stream()
-//                .filter(user -> !user.isDeleted())
-//                .map(user -> mapper.toDto(user, UserDto.class)).toList();
-//    }
+    @Override
+    public List<UserDto> findUsersByCraft(Craft craft) throws NotFoundException {
+        List<UserEntity> users = userRepository.findByCraft(craft);
+
+        if(users.isEmpty()) {
+            LOGGER.error("No any user exist in the system!");
+            throw new NotFoundException("No any user in users table!");
+        }
+
+        return users.stream()
+                .filter(user -> !user.isDeleted())
+                .map(user -> mapper.toDto(user, UserDto.class)).toList();
+    }
 
 
     @Override

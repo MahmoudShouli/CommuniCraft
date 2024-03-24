@@ -1,7 +1,7 @@
 package com.aswe.communicraft.models.dto;
 
-import com.aswe.communicraft.models.enums.Crafts;
-import com.aswe.communicraft.models.enums.Roles;
+import com.aswe.communicraft.models.enums.Craft;
+import com.aswe.communicraft.models.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,9 +17,9 @@ public class UserDto {
 
     private String password;
 
-    private Crafts craft;
+    private Craft craft;
 
-    private Roles role;
+    private Role role;
 
     private String levelOfSkill;
 

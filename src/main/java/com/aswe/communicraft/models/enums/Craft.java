@@ -1,5 +1,5 @@
 package com.aswe.communicraft.models.enums;
 
-public enum Crafts {
+public enum Craft {
     PAINTER , CARPENTER , TAILOR, ARTIST, PLUMBER
 }

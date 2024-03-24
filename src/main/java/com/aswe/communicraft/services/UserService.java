@@ -2,7 +2,7 @@ package com.aswe.communicraft.services;
 
 import com.aswe.communicraft.exceptions.NotFoundException;
 import com.aswe.communicraft.models.dto.UserDto;
-import com.aswe.communicraft.models.enums.Crafts;
+import com.aswe.communicraft.models.enums.Craft;
 
 import java.util.List;
 
@@ -14,5 +14,5 @@ public interface UserService {
     List<UserDto> findAllUsers() throws NotFoundException;
     UserDto findByUsername(String name) throws NotFoundException;
 
-//    List<UserDto> findUsersByCraft(Crafts craft) throws NotFoundException;
+    List<UserDto> findUsersByCraft(Craft craft) throws NotFoundException;
 }

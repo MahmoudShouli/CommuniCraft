@@ -1,5 +1,5 @@
 package com.aswe.communicraft.models.enums;
 
-public enum Roles {
+public enum Role {
     ADMIN,CRAFTSMAN,INVESTOR
 }
