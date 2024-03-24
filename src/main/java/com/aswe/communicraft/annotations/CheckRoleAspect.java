@@ -15,7 +15,6 @@ public class CheckRoleAspect {
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
 
         String role = SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
-
         if (!role.equalsIgnoreCase("ADMIN")) {
 
             UserDto user = (UserDto) joinPoint.proceed();

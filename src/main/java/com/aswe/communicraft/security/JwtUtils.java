@@ -44,7 +44,8 @@ public class JwtUtils implements UserDetailsService {
         Claims claims = Jwts.claims().setSubject(userDetails.getUsername());
         claims.put("id", userDetails.getId());
         claims.put("email", userDetails.getEmail());
-        claims.put("role", userDetails.getRoleEntity().getRoleName());
+        claims.put("craft", userDetails.getCraft());
+        claims.put("role", userDetails.getRole());
 
 
 

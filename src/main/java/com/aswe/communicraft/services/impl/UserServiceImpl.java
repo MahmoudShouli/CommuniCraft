@@ -5,6 +5,7 @@ import com.aswe.communicraft.exceptions.NotFoundException;
 import com.aswe.communicraft.mapper.Mapper;
 import com.aswe.communicraft.models.dto.UserDto;
 import com.aswe.communicraft.models.entities.UserEntity;
+import com.aswe.communicraft.models.enums.Crafts;
 import com.aswe.communicraft.repositories.UserRepository;
 import com.aswe.communicraft.security.SecurityConfig;
 import com.aswe.communicraft.services.UserService;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -36,8 +38,23 @@ public class UserServiceImpl implements UserService {
         userOptional.get().setEmail(userDto.getEmail());
         userOptional.get().setPassword(securityConfig.passwordEncoder().encode(userDto.getPassword()));
         userOptional.get().setLevelOfSkill(userDto.getLevelOfSkill());
+        userOptional.get().setCraft(userDto.getCraft());
 
         userRepository.save(userOptional.get());
+    }
+
+    @Override
+    public List<UserDto> findAllUsers() throws NotFoundException {
+        List<UserEntity> users = userRepository.findAll();
+
+        if(users.isEmpty()) {
+            LOGGER.error("No any user exist in the system!");
+            throw new NotFoundException("No any user in users table!");
+        }
+
+        return users.stream()
+                .filter(user -> !user.isDeleted())
+                .map(user -> mapper.toDto(user, UserDto.class)).toList();
     }
 
     @HidePasswordIfNotAdmin
@@ -50,12 +67,33 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("This user with id = " + id + " not exist!");
         }
 
-
-
-
-
         return mapper.toDto(userEntity,UserDto.class);
     }
+
+    @Override
+    public UserDto findByUsername(String name) throws NotFoundException {
+        Optional<UserEntity> user = userRepository.findByUserName(name);
+
+        if (user.isEmpty())
+            throw new NotFoundException("User not exist with name: " + name);
+
+        return mapper.toDto(user.get(), UserDto.class);
+    }
+
+//    @Override
+//    public List<UserDto> findUsersByCraft(Crafts craft) throws NotFoundException {
+//        List<UserEntity> users = userRepository.findByCraft(craft);
+//
+//        if(users.isEmpty()) {
+//            LOGGER.error("No any user exist in the system!");
+//            throw new NotFoundException("No any user in users table!");
+//        }
+//
+//        return users.stream()
+//                .filter(user -> !user.isDeleted())
+//                .map(user -> mapper.toDto(user, UserDto.class)).toList();
+//    }
+
 
     @Override
     public void deleteUser(int id) throws NotFoundException {
@@ -68,8 +106,11 @@ public class UserServiceImpl implements UserService {
 
 
         userRepository.softDeleteById(id);
-
     }
+
+
+
+
 
 
 }
