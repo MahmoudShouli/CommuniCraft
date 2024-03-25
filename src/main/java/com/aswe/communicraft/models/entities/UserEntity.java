@@ -1,5 +1,7 @@
 package com.aswe.communicraft.models.entities;
 
+import com.aswe.communicraft.models.enums.Craft;
+import com.aswe.communicraft.models.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,16 +27,18 @@ public class UserEntity {
     @Column(nullable = false)
     private String password;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "role_id")
-    private RoleEntity roleEntity;
+    @Column()
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "craft_id")
-    private CraftEntity craftEntity;
+    @Column()
+    @Enumerated(EnumType.STRING)
+    private Craft craft;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean isDeleted;
 
     @Column()
     private String levelOfSkill;
-
 
 }

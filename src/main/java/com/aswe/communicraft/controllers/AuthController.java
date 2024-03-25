@@ -27,6 +27,7 @@ public class AuthController {
     private final AuthService authService;
 
 
+
     @PostMapping("/register")
     public ResponseEntity<String> register(@Valid @RequestBody RegisterDto registerDto) throws UserAlreadyFoundException {
 
@@ -36,9 +37,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDto loginDto, HttpServletResponse response) {
+    public ResponseEntity<String> login(@RequestBody LoginDto loginDto, HttpServletResponse response) {
         String jwt = authService.login(loginDto, response);
         LOGGER.info("log in user with name: " + loginDto.getUserName());
-        return ResponseEntity.ok().body(jwt);
+        return ResponseEntity.ok().body("Here is your token:\n " + jwt);
     }
 }

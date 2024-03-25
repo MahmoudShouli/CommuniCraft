@@ -1,8 +1,8 @@
 package com.aswe.communicraft.security;
 
-import com.aswe.communicraft.models.entities.CraftEntity;
-import com.aswe.communicraft.models.entities.RoleEntity;
 import com.aswe.communicraft.models.entities.UserEntity;
+import com.aswe.communicraft.models.enums.Craft;
+import com.aswe.communicraft.models.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,21 +18,23 @@ public class UserDetailsImpl implements UserDetails {
     private String name;
     @JsonIgnore
     private String password;
-    private RoleEntity roleEntity;
-    private CraftEntity craftEntity;
+    private Role role;
+    private Craft craft;
     private String levelOfSkill;
+    private boolean isDeleted;
     private static Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(int id, String email, String name, String password, RoleEntity roleEntity , CraftEntity craftEntity,
-                           String levelOfSkill,Collection<? extends GrantedAuthority> authorities) {
+    public UserDetailsImpl(int id, String email, String name, String password, Role role , Craft craft,
+                           String levelOfSkill, boolean isDeleted, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = name;
         this.email = email;
         this.name = name;
         this.password = password;
-        this.roleEntity = roleEntity;
-        this.craftEntity = craftEntity;
+        this.role = role;
+        this.craft = craft;
         this.levelOfSkill= levelOfSkill;
+        this.isDeleted = isDeleted;
         UserDetailsImpl.authorities = authorities;
     }
 
@@ -45,9 +47,10 @@ public class UserDetailsImpl implements UserDetails {
                 userEntity.getEmail(),
                 userEntity.getUserName(),
                 userEntity.getPassword(),
-                userEntity.getRoleEntity(),
-                userEntity.getCraftEntity(),
+                userEntity.getRole(),
+                userEntity.getCraft(),
                 userEntity.getLevelOfSkill(),
+                userEntity.isDeleted(),
                 authorities);
     }
 
@@ -59,12 +62,14 @@ public class UserDetailsImpl implements UserDetails {
                 user.getUsername(),
                 user.getEmail(),
                 user.getPassword(),
-                user.getRoleEntity(),
-                user.getCraftEntity(),
+                user.getRole(),
+                user.getCraft(),
+                user.isDeleted(),
                 user.getLevelOfSkill());
+
     }
 
-    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+    public static void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
         UserDetailsImpl.authorities = authorities;
     }
 
@@ -109,5 +114,10 @@ public class UserDetailsImpl implements UserDetails {
             return false;
 
         return o instanceof UserDetailsImpl;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

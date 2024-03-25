@@ -1,5 +1,6 @@
 package com.aswe.communicraft.security;
 
+import com.aswe.communicraft.handlers.CustomAccessDeniedHandler;
 import com.aswe.communicraft.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +29,7 @@ public class SecurityConfig {
 
     private final AuthEntryPointJwt authEntryPointJwt;
     private final UserRepository userRepository;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     /**
      * Used to load user-specific data during authentication
@@ -83,7 +85,7 @@ public class SecurityConfig {
                                 .anyRequest().authenticated())
 
                 .exceptionHandling(handler -> handler
-//                        .accessDeniedHandler(customAccessDeniedHandler)
+                        .accessDeniedHandler(customAccessDeniedHandler)
                         .authenticationEntryPoint(authEntryPointJwt))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
