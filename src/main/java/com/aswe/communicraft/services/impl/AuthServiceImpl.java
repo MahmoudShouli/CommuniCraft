@@ -1,7 +1,7 @@
 package com.aswe.communicraft.services.impl;
 
 import com.aswe.communicraft.exceptions.LoginFailedException;
-import com.aswe.communicraft.exceptions.UserAlreadyFoundException;
+import com.aswe.communicraft.exceptions.AlreadyFoundException;
 import com.aswe.communicraft.mapper.Mapper;
 import com.aswe.communicraft.models.dto.LoginDto;
 import com.aswe.communicraft.models.dto.RegisterDto;
@@ -46,11 +46,11 @@ public class AuthServiceImpl implements AuthService {
      */
 
     @Override
-    public void register(RegisterDto registerDto) throws UserAlreadyFoundException {
+    public void register(RegisterDto registerDto) throws AlreadyFoundException {
         Optional<UserEntity> user = userRepository.findByUserName(registerDto.getUserName());
 
         if (user.isPresent()) {
-            throw new UserAlreadyFoundException("user already exists");
+            throw new AlreadyFoundException("user already exists");
         }
 
         UserEntity userEntity = mapper.toEntity(registerDto, UserEntity.class);
