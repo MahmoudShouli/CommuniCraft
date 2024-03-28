@@ -4,8 +4,9 @@ import com.aswe.communicraft.annotations.HidePasswordIfNotAdmin;
 import com.aswe.communicraft.exceptions.NotFoundException;
 import com.aswe.communicraft.mapper.Mapper;
 import com.aswe.communicraft.models.dto.UserDto;
+import com.aswe.communicraft.models.entities.CraftEntity;
 import com.aswe.communicraft.models.entities.UserEntity;
-import com.aswe.communicraft.models.enums.Craft;
+import com.aswe.communicraft.repositories.CraftRepository;
 import com.aswe.communicraft.repositories.UserRepository;
 import com.aswe.communicraft.security.SecurityConfig;
 import com.aswe.communicraft.services.UserService;
@@ -24,21 +25,31 @@ public class UserServiceImpl implements UserService {
     private final SecurityConfig securityConfig;
     private final Mapper<UserEntity, UserDto> mapper;
     private final UserRepository userRepository;
+    private final CraftRepository craftRepository;
 
     @Override
     public void update(UserDto userDto, int id) throws NotFoundException {
         Optional<UserEntity> userOptional = userRepository.findById(id);
+        CraftEntity craftEntity = craftRepository.findByName(userDto.getCraft().getName());
 
         if(userOptional.isEmpty()) {
             LOGGER.error("User with id = " + id + " Not exist!");
             throw new NotFoundException("User with id = " + id + " Not exist!");
         }
 
+        if(craftEntity == null){
+            craftEntity = new CraftEntity();
+            craftEntity.setName(userDto.getCraft().getName());
+            craftRepository.save(craftEntity);
+        }
+
+
+
         userOptional.get().setUserName(userDto.getUserName());
         userOptional.get().setEmail(userDto.getEmail());
         userOptional.get().setPassword(securityConfig.passwordEncoder().encode(userDto.getPassword()));
         userOptional.get().setLevelOfSkill(userDto.getLevelOfSkill());
-        userOptional.get().setCraft(userDto.getCraft());
+        userOptional.get().setCraftEntity(craftEntity);
 
         userRepository.save(userOptional.get());
     }
@@ -69,10 +80,11 @@ public class UserServiceImpl implements UserService {
 
         return mapper.toDto(userEntity,UserDto.class);
     }
-
+    @HidePasswordIfNotAdmin
     @Override
     public UserDto findByUsername(String name) throws NotFoundException {
         Optional<UserEntity> user = userRepository.findByUserName(name);
+        System.out.println(user.get().getUserName());
 
         if (user.isEmpty())
             throw new NotFoundException("User not exist with name: " + name);
@@ -81,12 +93,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> findUsersByCraft(Craft craft) throws NotFoundException {
-        List<UserEntity> users = userRepository.findByCraft(craft);
+    @HidePasswordIfNotAdmin
+    public List<UserDto> findUsersByCraft(String craft) throws NotFoundException {
+        CraftEntity craftEntity = craftRepository.findByName(craft);
+        List<UserEntity> users = userRepository.findByCraftEntity(craftEntity);
 
         if(users.isEmpty()) {
             LOGGER.error("No any user exist in the system!");
             throw new NotFoundException("No any user in users table!");
+        }
+
+        if(craftEntity == null){
+            LOGGER.error("No any craft with this name exist in the system!");
+            throw new NotFoundException("No any craft in craft table!");
         }
 
         return users.stream()

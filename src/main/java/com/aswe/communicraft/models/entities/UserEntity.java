@@ -1,6 +1,5 @@
 package com.aswe.communicraft.models.entities;
 
-import com.aswe.communicraft.models.enums.Craft;
 import com.aswe.communicraft.models.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -31,9 +30,9 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column()
-    @Enumerated(EnumType.STRING)
-    private Craft craft;
+    @ManyToOne
+    @JoinColumn(name = "craft_id")
+    private CraftEntity craftEntity;
 
     @Column(columnDefinition = "boolean default false")
     private boolean isDeleted;

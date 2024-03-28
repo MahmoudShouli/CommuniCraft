@@ -1,7 +1,7 @@
 package com.aswe.communicraft.security;
 
+import com.aswe.communicraft.models.entities.CraftEntity;
 import com.aswe.communicraft.models.entities.UserEntity;
-import com.aswe.communicraft.models.enums.Craft;
 import com.aswe.communicraft.models.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -19,12 +19,12 @@ public class UserDetailsImpl implements UserDetails {
     @JsonIgnore
     private String password;
     private Role role;
-    private Craft craft;
+    private CraftEntity craft;
     private String levelOfSkill;
     private boolean isDeleted;
     private static Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(int id, String email, String name, String password, Role role , Craft craft,
+    public UserDetailsImpl(int id, String email, String name, String password, Role role , CraftEntity craft,
                            String levelOfSkill, boolean isDeleted, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = name;
@@ -48,7 +48,7 @@ public class UserDetailsImpl implements UserDetails {
                 userEntity.getUserName(),
                 userEntity.getPassword(),
                 userEntity.getRole(),
-                userEntity.getCraft(),
+                userEntity.getCraftEntity(),
                 userEntity.getLevelOfSkill(),
                 userEntity.isDeleted(),
                 authorities);

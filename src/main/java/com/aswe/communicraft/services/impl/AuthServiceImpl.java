@@ -5,7 +5,9 @@ import com.aswe.communicraft.exceptions.AlreadyFoundException;
 import com.aswe.communicraft.mapper.Mapper;
 import com.aswe.communicraft.models.dto.LoginDto;
 import com.aswe.communicraft.models.dto.RegisterDto;
+import com.aswe.communicraft.models.entities.CraftEntity;
 import com.aswe.communicraft.models.entities.UserEntity;
+import com.aswe.communicraft.repositories.CraftRepository;
 import com.aswe.communicraft.repositories.UserRepository;
 import com.aswe.communicraft.security.JwtUtils;
 import com.aswe.communicraft.security.SecurityConfig;
@@ -31,6 +33,7 @@ public class AuthServiceImpl implements AuthService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthServiceImpl.class);
 
     private final UserRepository userRepository;
+    private final CraftRepository craftRepository;
     private final Mapper<UserEntity, RegisterDto> mapper;
     private final SecurityConfig securityConfig;
     private final AuthenticationManager authenticationManager;
@@ -48,12 +51,21 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void register(RegisterDto registerDto) throws AlreadyFoundException {
         Optional<UserEntity> user = userRepository.findByUserName(registerDto.getUserName());
+        CraftEntity craftEntity = craftRepository.findByName(registerDto.getCraft().getName());
+
+
+        if(craftEntity == null){
+            craftEntity = new CraftEntity();
+            craftEntity.setName(registerDto.getCraft().getName());
+            craftRepository.save(craftEntity);
+        }
 
         if (user.isPresent()) {
             throw new AlreadyFoundException("user already exists");
         }
 
         UserEntity userEntity = mapper.toEntity(registerDto, UserEntity.class);
+        userEntity.setCraftEntity(craftEntity);
         userEntity.setPassword(securityConfig.passwordEncoder().encode(userEntity.getPassword()));
 
         userRepository.save(userEntity);
