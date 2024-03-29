@@ -1,6 +1,7 @@
 package com.aswe.communicraft.security;
 
 import com.aswe.communicraft.models.entities.CraftEntity;
+import com.aswe.communicraft.models.entities.ProjectEntity;
 import com.aswe.communicraft.models.entities.UserEntity;
 import com.aswe.communicraft.models.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -20,6 +21,7 @@ public class UserDetailsImpl implements UserDetails {
     private String password;
     private Role role;
     private CraftEntity craft;
+    private ProjectEntity project;
     private String levelOfSkill;
     private boolean isDeleted;
     private static Collection<? extends GrantedAuthority> authorities;
@@ -48,7 +50,7 @@ public class UserDetailsImpl implements UserDetails {
                 userEntity.getUserName(),
                 userEntity.getPassword(),
                 userEntity.getRole(),
-                userEntity.getCraftEntity(),
+                userEntity.getCraft(),
                 userEntity.getLevelOfSkill(),
                 userEntity.isDeleted(),
                 authorities);
@@ -64,6 +66,7 @@ public class UserDetailsImpl implements UserDetails {
                 user.getPassword(),
                 user.getRole(),
                 user.getCraft(),
+                user.getProject(),
                 user.isDeleted(),
                 user.getLevelOfSkill());
 

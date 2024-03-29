@@ -16,7 +16,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     Optional<UserEntity> findByUserName(String username);
 
-    List<UserEntity> findByCraftEntity(CraftEntity craftEntity);
+    List<UserEntity> findByCraft(CraftEntity craft);
 
     @Modifying
     @Transactional

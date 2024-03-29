@@ -30,17 +30,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public void update(UserDto userDto, int id) throws NotFoundException {
         Optional<UserEntity> userOptional = userRepository.findById(id);
-        CraftEntity craftEntity = craftRepository.findByName(userDto.getCraft().getName());
+        Optional<CraftEntity> craftEntity = craftRepository.findByName(userDto.getCraft().getName());
 
         if(userOptional.isEmpty()) {
             LOGGER.error("User with id = " + id + " Not exist!");
             throw new NotFoundException("User with id = " + id + " Not exist!");
         }
 
-        if(craftEntity == null){
-            craftEntity = new CraftEntity();
-            craftEntity.setName(userDto.getCraft().getName());
-            craftRepository.save(craftEntity);
+        if(craftEntity.isEmpty()){
+            CraftEntity craft = new CraftEntity();
+            craft.setName(userDto.getCraft().getName());
+            craftRepository.save(craft);
         }
 
 
@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
         userOptional.get().setEmail(userDto.getEmail());
         userOptional.get().setPassword(securityConfig.passwordEncoder().encode(userDto.getPassword()));
         userOptional.get().setLevelOfSkill(userDto.getLevelOfSkill());
-        userOptional.get().setCraftEntity(craftEntity);
+        userOptional.get().setCraft(craftEntity.get());
 
         userRepository.save(userOptional.get());
     }
@@ -95,8 +95,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @HidePasswordIfNotAdmin
     public List<UserDto> findUsersByCraft(String craft) throws NotFoundException {
-        CraftEntity craftEntity = craftRepository.findByName(craft);
-        List<UserEntity> users = userRepository.findByCraftEntity(craftEntity);
+        Optional<CraftEntity> craftEntity = craftRepository.findByName(craft);
+        List<UserEntity> users = userRepository.findByCraft(craftEntity.get());
 
         if(users.isEmpty()) {
             LOGGER.error("No any user exist in the system!");

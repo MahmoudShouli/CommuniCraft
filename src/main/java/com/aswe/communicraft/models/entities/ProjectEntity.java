@@ -1,10 +1,14 @@
 package com.aswe.communicraft.models.entities;
 
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -28,6 +32,13 @@ public class ProjectEntity {
     @Column(nullable = false)
     private boolean isFinished;
 
+    @OneToMany(mappedBy = "project",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<UserEntity> craftsmenList;
+
+    @OneToMany(mappedBy = "project",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<ProjectCraft> craftsNeeded;
 
 
 }

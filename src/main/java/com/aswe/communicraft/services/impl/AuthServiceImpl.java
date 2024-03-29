@@ -51,13 +51,13 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void register(RegisterDto registerDto) throws AlreadyFoundException {
         Optional<UserEntity> user = userRepository.findByUserName(registerDto.getUserName());
-        CraftEntity craftEntity = craftRepository.findByName(registerDto.getCraft().getName());
+        Optional<CraftEntity> craftEntity = craftRepository.findByName(registerDto.getCraft().getName());
 
 
-        if(craftEntity == null){
-            craftEntity = new CraftEntity();
-            craftEntity.setName(registerDto.getCraft().getName());
-            craftRepository.save(craftEntity);
+        if(craftEntity.isEmpty()){
+            CraftEntity craft = new CraftEntity();
+            craft.setName(registerDto.getCraft().getName());
+            craftRepository.save(craft);
         }
 
         if (user.isPresent()) {
@@ -65,7 +65,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         UserEntity userEntity = mapper.toEntity(registerDto, UserEntity.class);
-        userEntity.setCraftEntity(craftEntity);
+        userEntity.setCraft(craftEntity.get());
         userEntity.setPassword(securityConfig.passwordEncoder().encode(userEntity.getPassword()));
 
         userRepository.save(userEntity);

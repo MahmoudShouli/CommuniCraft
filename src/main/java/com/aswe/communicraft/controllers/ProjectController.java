@@ -5,6 +5,7 @@ import com.aswe.communicraft.exceptions.AlreadyFoundException;
 import com.aswe.communicraft.exceptions.NotFoundException;
 import com.aswe.communicraft.models.dto.ProjectDto;
 import com.aswe.communicraft.services.ProjectService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,15 @@ public class ProjectController {
 
         return ResponseEntity.ok(projectDto);
 
+    }
+
+    @PostMapping(value="/{name}")
+    @PreAuthorize("hasAuthority('CRAFTSMAN')")
+    public ResponseEntity<String> joinProject(@PathVariable String name, HttpServletRequest request) throws NotFoundException {
+
+        ProjectDto projectDto = projectService.findByName(name);
+
+        return ResponseEntity.ok().body(projectService.addCraftsman(name,request, projectDto));
     }
 
 

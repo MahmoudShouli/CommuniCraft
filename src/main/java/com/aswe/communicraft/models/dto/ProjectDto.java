@@ -1,9 +1,14 @@
 package com.aswe.communicraft.models.dto;
 
 
+import com.aswe.communicraft.models.entities.CraftEntity;
+import com.aswe.communicraft.models.entities.ProjectCraft;
+import com.aswe.communicraft.models.entities.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -15,5 +20,7 @@ public class ProjectDto {
 
     private int numberOfTasks;
 
-    //private List<UserEntity> craftsmenList;
+    private List<UserEntity> craftsmenList;
+
+    private List<ProjectCraft> craftsNeeded;
 }

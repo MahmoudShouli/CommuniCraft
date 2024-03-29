@@ -37,6 +37,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             if (request.getServletPath().contains("/auth")) {
+                System.out.println("hee");
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -49,11 +50,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 return;
             }
 
-            jwt = authHeader.substring(7);
 
-            String username = jwtUtils.getUserNameFromJwtToken(jwt);
-            Integer userId = jwtUtils.getIdFromJwtToken(jwt);
-            String userRole = jwtUtils.getRoleFromJwtToken(jwt);
+
+            String username = jwtUtils.getUserNameFromJwtToken(authHeader);
+            Integer userId = jwtUtils.getIdFromJwtToken(authHeader);
+            String userRole = jwtUtils.getRoleFromJwtToken(authHeader);
 
             LOGGER.info("doFilterInternal :: got username = " + username + " with id = " + userId + " and role = " + userRole + " from jwt.");
 
@@ -61,7 +62,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(userRole));
             userDetails.setAuthorities(authorities);
 
-            if(jwtUtils.validateJwtToken(jwt)) {
+            if(jwtUtils.validateJwtToken(authHeader)) {
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

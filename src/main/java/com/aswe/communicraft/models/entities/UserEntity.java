@@ -1,6 +1,7 @@
 package com.aswe.communicraft.models.entities;
 
 import com.aswe.communicraft.models.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,7 +33,13 @@ public class UserEntity {
 
     @ManyToOne
     @JoinColumn(name = "craft_id")
-    private CraftEntity craftEntity;
+    @JsonIgnore
+    private CraftEntity craft;
+
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    @JsonIgnore
+    private ProjectEntity project;
 
     @Column(columnDefinition = "boolean default false")
     private boolean isDeleted;
