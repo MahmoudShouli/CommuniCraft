@@ -58,5 +58,11 @@ public class UserController {
         List<UserDto> users = userService.findUsersByCraft(name);
         return ResponseEntity.ok(users);
     }
+    @PostMapping("/leader/{name}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<String> makeLeader(@PathVariable String name) throws NotFoundException {
+        userService.makeLeader(name);
+        return ResponseEntity.ok("the user is now a leader");
+    }
 
 }

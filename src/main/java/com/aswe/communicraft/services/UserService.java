@@ -14,4 +14,5 @@ public interface UserService {
     UserDto findByUsername(String name) throws NotFoundException;
 
     List<UserDto> findUsersByCraft(String craft) throws NotFoundException;
+    void makeLeader(String name) throws NotFoundException;
 }

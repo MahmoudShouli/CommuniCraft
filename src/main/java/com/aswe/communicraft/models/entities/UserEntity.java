@@ -46,4 +46,8 @@ public class UserEntity {
 
     @Column()
     private String levelOfSkill;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean isLeader;
+
 }

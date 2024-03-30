@@ -9,4 +9,5 @@ public interface ProjectService {
     void addProject(ProjectDto projectDto) throws AlreadyFoundException;
     ProjectDto findByName(String name) throws NotFoundException;
     void joinProject(String name, HttpServletRequest request) throws NotFoundException;
+
 }

@@ -113,6 +113,17 @@ public class UserServiceImpl implements UserService {
                 .map(user -> mapper.toDto(user, UserDto.class)).toList();
     }
 
+    @Override
+    public void makeLeader(String name) throws NotFoundException {
+        Optional<UserEntity> user = userRepository.findByUserName(name);
+
+        if (user.isEmpty() || user.get().isDeleted()){
+            throw new NotFoundException("User not exist with name: " + name);
+        }
+
+        userRepository.makeLeader(name);
+    }
+
 
     @Override
     public void deleteUser(int id) throws NotFoundException {
@@ -123,13 +134,8 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("This user with id = " + id + " not exist!");
         }
 
-
         userRepository.softDeleteById(id);
     }
-
-
-
-
 
 
 }

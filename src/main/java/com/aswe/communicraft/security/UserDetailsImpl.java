@@ -24,10 +24,11 @@ public class UserDetailsImpl implements UserDetails {
     private ProjectEntity project;
     private String levelOfSkill;
     private boolean isDeleted;
+    private boolean isLeader;
     private static Collection<? extends GrantedAuthority> authorities;
 
     public UserDetailsImpl(int id, String email, String name, String password, Role role , CraftEntity craft,
-                           String levelOfSkill, boolean isDeleted, Collection<? extends GrantedAuthority> authorities) {
+                           String levelOfSkill, boolean isDeleted,boolean isLeader, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = name;
         this.email = email;
@@ -37,6 +38,7 @@ public class UserDetailsImpl implements UserDetails {
         this.craft = craft;
         this.levelOfSkill= levelOfSkill;
         this.isDeleted = isDeleted;
+        this.isLeader = isLeader;
         UserDetailsImpl.authorities = authorities;
     }
 
@@ -53,6 +55,7 @@ public class UserDetailsImpl implements UserDetails {
                 userEntity.getCraft(),
                 userEntity.getLevelOfSkill(),
                 userEntity.isDeleted(),
+                userEntity.isLeader(),
                 authorities);
     }
 
@@ -68,7 +71,8 @@ public class UserDetailsImpl implements UserDetails {
                 user.getCraft(),
                 user.getProject(),
                 user.isDeleted(),
-                user.getLevelOfSkill());
+                user.getLevelOfSkill(),
+                user.isLeader());
 
     }
 
