@@ -22,5 +22,5 @@ public class ProjectDto {
 
     private List<UserEntity> craftsmenList;
 
-    private List<ProjectCraft> craftsNeeded;
+    private List<String> craftsNeeded;
 }

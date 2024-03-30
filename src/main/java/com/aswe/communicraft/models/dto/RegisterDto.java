@@ -15,7 +15,6 @@ public class RegisterDto {
     private String email;
     private String password;
     private Role role;
-    @JsonIgnore
     private CraftDto craft;
     private String levelOfSkill;
 }

@@ -2,13 +2,12 @@ package com.aswe.communicraft.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -28,6 +27,4 @@ public class CraftEntity {
     @OneToMany(mappedBy = "craft", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<UserEntity> users;
-
-
 }

@@ -1,22 +1,18 @@
 package com.aswe.communicraft.security;
 
 import com.aswe.communicraft.models.entities.UserEntity;
-
 import com.aswe.communicraft.repositories.UserRepository;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-
 import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
@@ -46,15 +42,10 @@ public class JwtUtils implements UserDetailsService {
         Claims claims = Jwts.claims().setSubject(userDetails.getUsername());
         claims.put("id", userDetails.getId());
         claims.put("email", userDetails.getEmail());
-        claims.put("craft", userDetails.getCraft());
         claims.put("role", userDetails.getRole());
-
-
 
         byte[] secretKeyBytes = Base64.getDecoder().decode(jwtSecret);
         SecretKey secretKey = new SecretKeySpec(secretKeyBytes, "HmacSHA256");
-
-
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -81,6 +72,7 @@ public class JwtUtils implements UserDetailsService {
         token = token.substring(7);
         return Jwts.parserBuilder().setSigningKey(Base64.getDecoder().decode(jwtSecret)).build().parseClaimsJws(token.split("\\|")[0]).getBody().get("id", Integer.class);
     }
+
     /**
      * Extract userRole from jwt token claims based on the jwt secret
      */
@@ -88,15 +80,6 @@ public class JwtUtils implements UserDetailsService {
         LOGGER.debug("getRoleFromJwtToken :: Getting role from token");
         token = token.substring(7);
         return Jwts.parserBuilder().setSigningKey(Base64.getDecoder().decode(jwtSecret)).build().parseClaimsJws(token.split("\\|")[0]).getBody().get("role", String.class);
-    }
-
-
-
-
-    public String getCraftFromJwtToken(String token) {
-        LOGGER.debug("getCraftFromJwtToken :: Getting craft from token");
-        token = token.substring(7);
-        return Jwts.parserBuilder().setSigningKey(Base64.getDecoder().decode(jwtSecret)).build().parseClaimsJws(token.split("\\|")[0]).getBody().get("craft", String.class);
     }
 
     public boolean validateJwtToken(String authToken) {
@@ -116,11 +99,6 @@ public class JwtUtils implements UserDetailsService {
         }
         return false;
     }
-
-
-
-
-
 
     /**
      *  Load the user from repository and convert to UserDetails data

@@ -39,14 +39,11 @@ public class ProjectController {
 
     }
 
-    @PostMapping(value="/{name}")
+    @PostMapping("/join/{name}")
     @PreAuthorize("hasAuthority('CRAFTSMAN')")
     public ResponseEntity<String> joinProject(@PathVariable String name, HttpServletRequest request) throws NotFoundException {
+        projectService.joinProject(name, request);
 
-        ProjectDto projectDto = projectService.findByName(name);
-
-        return ResponseEntity.ok().body(projectService.addCraftsman(name,request, projectDto));
+        return ResponseEntity.ok().body("Joined Project Successfully!");
     }
-
-
 }

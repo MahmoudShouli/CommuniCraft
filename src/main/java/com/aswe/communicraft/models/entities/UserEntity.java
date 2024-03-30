@@ -4,15 +4,16 @@ import com.aswe.communicraft.models.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +34,6 @@ public class UserEntity {
 
     @ManyToOne
     @JoinColumn(name = "craft_id")
-    @JsonIgnore
     private CraftEntity craft;
 
     @ManyToOne
@@ -46,5 +46,4 @@ public class UserEntity {
 
     @Column()
     private String levelOfSkill;
-
 }
