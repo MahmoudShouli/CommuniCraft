@@ -50,4 +50,8 @@ public class UserEntity {
     @Column(columnDefinition = "boolean default false")
     private boolean isLeader;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "task_id")
+    private TaskEntity task;
+
 }

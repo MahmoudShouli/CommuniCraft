@@ -4,12 +4,11 @@ import com.aswe.communicraft.exceptions.AlreadyFoundException;
 import com.aswe.communicraft.exceptions.NotFoundException;
 import com.aswe.communicraft.mapper.Mapper;
 import com.aswe.communicraft.models.dto.ProjectDto;
-import com.aswe.communicraft.models.entities.CraftEntity;
-import com.aswe.communicraft.models.entities.ProjectCraft;
-import com.aswe.communicraft.models.entities.ProjectEntity;
-import com.aswe.communicraft.models.entities.UserEntity;
+import com.aswe.communicraft.models.dto.TaskDto;
+import com.aswe.communicraft.models.entities.*;
 import com.aswe.communicraft.repositories.CraftRepository;
 import com.aswe.communicraft.repositories.ProjectRepository;
+import com.aswe.communicraft.repositories.TaskRepository;
 import com.aswe.communicraft.repositories.UserRepository;
 import com.aswe.communicraft.security.JwtUtils;
 import com.aswe.communicraft.services.ProjectService;
@@ -29,7 +28,8 @@ public class ProjectServiceImpl implements ProjectService {
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final CraftRepository craftRepository;
-    private final Mapper<ProjectEntity, ProjectDto> mapper;
+    private final Mapper<ProjectEntity, ProjectDto> projectMapper;
+
 
     @Override
     public void addProject(ProjectDto projectDto) throws AlreadyFoundException {
@@ -38,7 +38,7 @@ public class ProjectServiceImpl implements ProjectService {
         if (project.isPresent())
             throw new AlreadyFoundException("Name already exists. (copyrights issues)");
 
-        ProjectEntity projectEntity = mapper.toEntity(projectDto, ProjectEntity.class);
+        ProjectEntity projectEntity = projectMapper.toEntity(projectDto, ProjectEntity.class);
 
         List<ProjectCraft> projectCrafts = new ArrayList<>();
 
@@ -63,7 +63,7 @@ public class ProjectServiceImpl implements ProjectService {
         if (project.isEmpty())
             throw new NotFoundException("Project Not Found");
 
-        ProjectDto projectDto = mapper.toDto(project.get(), ProjectDto.class);
+        ProjectDto projectDto = projectMapper.toDto(project.get(), ProjectDto.class);
         projectDto.setCraftsNeeded(
                 project.get().getProjectCrafts().stream().map(projectCraft -> projectCraft.getCraft().getName()).toList()
         );

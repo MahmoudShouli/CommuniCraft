@@ -1,5 +1,6 @@
 package com.aswe.communicraft.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -33,4 +34,8 @@ public class ProjectEntity {
 
     @OneToMany(mappedBy = "project",cascade = CascadeType.ALL)
     private List<ProjectCraft> projectCrafts;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<TaskEntity> tasks;
 }

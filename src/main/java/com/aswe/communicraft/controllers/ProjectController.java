@@ -4,6 +4,7 @@ package com.aswe.communicraft.controllers;
 import com.aswe.communicraft.exceptions.AlreadyFoundException;
 import com.aswe.communicraft.exceptions.NotFoundException;
 import com.aswe.communicraft.models.dto.ProjectDto;
+import com.aswe.communicraft.models.dto.TaskDto;
 import com.aswe.communicraft.services.ProjectService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -30,7 +31,7 @@ public class ProjectController {
     }
 
 
-    @GetMapping(value = "/{name}")
+    @GetMapping(value = "/{project_name}")
     public ResponseEntity<ProjectDto> findProject(@PathVariable String name) throws NotFoundException {
 
         ProjectDto projectDto = projectService.findByName(name);
@@ -39,14 +40,12 @@ public class ProjectController {
 
     }
 
-    @PostMapping("/join/{name}")
+    @PostMapping("/join/{project_name}")
     @PreAuthorize("hasAuthority('CRAFTSMAN')")
     public ResponseEntity<String> joinProject(@PathVariable String name, HttpServletRequest request) throws NotFoundException {
         projectService.joinProject(name, request);
 
         return ResponseEntity.ok().body("Joined Project Successfully!");
     }
-
-
 
 }

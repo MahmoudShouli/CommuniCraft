@@ -18,9 +18,10 @@ public class ProjectDto {
 
     private int teamSize;
 
-    private int numberOfTasks;
 
     private List<UserEntity> craftsmenList;
 
     private List<String> craftsNeeded;
+
+
 }
