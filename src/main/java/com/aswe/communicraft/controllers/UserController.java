@@ -2,7 +2,6 @@ package com.aswe.communicraft.controllers;
 
 import com.aswe.communicraft.exceptions.NotFoundException;
 import com.aswe.communicraft.models.dto.UserDto;
-import com.aswe.communicraft.models.enums.Craft;
 import com.aswe.communicraft.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -53,10 +52,17 @@ public class UserController {
         UserDto user = userService.findByUsername(name);
         return ResponseEntity.ok(user);
     }
+
     @GetMapping("/crafts/{name}")
-    public ResponseEntity<List<UserDto>> findUsersByCraft(@PathVariable Craft name) throws NotFoundException {
+    public ResponseEntity<List<UserDto>> findUsersByCraft(@PathVariable String name) throws NotFoundException {
         List<UserDto> users = userService.findUsersByCraft(name);
         return ResponseEntity.ok(users);
+    }
+    @PostMapping("/leader/{name}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<String> makeLeader(@PathVariable String name) throws NotFoundException {
+        userService.makeLeader(name);
+        return ResponseEntity.ok("the user is now a leader");
     }
 
 }

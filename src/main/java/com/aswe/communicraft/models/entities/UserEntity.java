@@ -1,18 +1,19 @@
 package com.aswe.communicraft.models.entities;
 
-import com.aswe.communicraft.models.enums.Craft;
 import com.aswe.communicraft.models.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,14 +32,26 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column()
-    @Enumerated(EnumType.STRING)
-    private Craft craft;
+    @ManyToOne
+    @JoinColumn(name = "craft_id")
+    private CraftEntity craft;
+
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    @JsonIgnore
+    private ProjectEntity project;
 
     @Column(columnDefinition = "boolean default false")
     private boolean isDeleted;
 
     @Column()
     private String levelOfSkill;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean isLeader;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "task_id")
+    private TaskEntity task;
 
 }

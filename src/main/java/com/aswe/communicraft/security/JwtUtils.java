@@ -11,10 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.security.SignatureException;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
@@ -40,19 +38,21 @@ public class JwtUtils implements UserDetailsService {
      * Generate jwt token from user information
      */
     public String generateTokenFromUserDetails(UserDetailsImpl userDetails) {
-        LOGGER.debug("generateTokenFromUserDetails :: Generating token from user details: " + userDetails);
+        //:(
+        //        LOGGER.debug("generateTokenFromUserDetails :: Generating token from user details: " + userDetails);
+
         Claims claims = Jwts.claims().setSubject(userDetails.getUsername());
+
         claims.put("id", userDetails.getId());
+
         claims.put("email", userDetails.getEmail());
-        claims.put("craft", userDetails.getCraft());
+
         claims.put("role", userDetails.getRole());
 
 
 
         byte[] secretKeyBytes = Base64.getDecoder().decode(jwtSecret);
         SecretKey secretKey = new SecretKeySpec(secretKeyBytes, "HmacSHA256");
-
-
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -67,6 +67,7 @@ public class JwtUtils implements UserDetailsService {
      */
     public String getUserNameFromJwtToken(String token) {
         LOGGER.debug("getUserNameFromJwtToken :: Getting username from token..");
+        token = token.substring(7);
         return Jwts.parserBuilder().setSigningKey(Base64.getDecoder().decode(jwtSecret)).build().parseClaimsJws(token.split("\\|")[0]).getBody().getSubject();
     }
 
@@ -75,18 +76,22 @@ public class JwtUtils implements UserDetailsService {
      */
     public Integer getIdFromJwtToken(String token) {
         LOGGER.debug("getIdFromJwtToken :: Getting id from token");
+        token = token.substring(7);
         return Jwts.parserBuilder().setSigningKey(Base64.getDecoder().decode(jwtSecret)).build().parseClaimsJws(token.split("\\|")[0]).getBody().get("id", Integer.class);
     }
+
     /**
      * Extract userRole from jwt token claims based on the jwt secret
      */
     public String getRoleFromJwtToken(String token) {
         LOGGER.debug("getRoleFromJwtToken :: Getting role from token");
+        token = token.substring(7);
         return Jwts.parserBuilder().setSigningKey(Base64.getDecoder().decode(jwtSecret)).build().parseClaimsJws(token.split("\\|")[0]).getBody().get("role", String.class);
     }
 
     public boolean validateJwtToken(String authToken) {
         try {
+            authToken = authToken.substring(7);
             Jwts.parserBuilder().setSigningKey(Base64.getDecoder().decode(jwtSecret)).build().parseClaimsJws(authToken);
             LOGGER.info("validateJwtToken :: Token validated");
             return true;
@@ -101,11 +106,6 @@ public class JwtUtils implements UserDetailsService {
         }
         return false;
     }
-
-
-
-
-
 
     /**
      *  Load the user from repository and convert to UserDetails data

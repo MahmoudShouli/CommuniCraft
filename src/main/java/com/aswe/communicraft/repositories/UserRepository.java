@@ -1,7 +1,7 @@
 package com.aswe.communicraft.repositories;
 
+import com.aswe.communicraft.models.entities.CraftEntity;
 import com.aswe.communicraft.models.entities.UserEntity;
-import com.aswe.communicraft.models.enums.Craft;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -16,10 +16,15 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     Optional<UserEntity> findByUserName(String username);
 
-    List<UserEntity> findByCraft(Craft craft);
+    List<UserEntity> findByCraft(CraftEntity craft);
 
     @Modifying
     @Transactional
     @Query("UPDATE UserEntity u SET u.isDeleted = true WHERE u.id = :id")
     void softDeleteById(@Param("id") int userId);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE UserEntity u SET u.isLeader = true WHERE u.userName = :name")
+    void makeLeader(@Param("name") String name);
 }
