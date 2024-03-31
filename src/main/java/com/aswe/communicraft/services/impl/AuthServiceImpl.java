@@ -93,6 +93,7 @@ public class AuthServiceImpl implements AuthService {
             String jwt = jwtUtils.generateTokenFromUserDetails(userDetails);
             response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + jwt);
             LOGGER.info("Check user credentials and set user authentication.");
+
             return jwt;
         } catch (Exception e) {
             LOGGER.error("Something went wrong when login user!");

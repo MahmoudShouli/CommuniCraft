@@ -2,6 +2,7 @@ package com.aswe.communicraft.security;
 
 import com.aswe.communicraft.models.entities.CraftEntity;
 import com.aswe.communicraft.models.entities.ProjectEntity;
+import com.aswe.communicraft.models.entities.TaskEntity;
 import com.aswe.communicraft.models.entities.UserEntity;
 import com.aswe.communicraft.models.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -25,10 +26,11 @@ public class UserDetailsImpl implements UserDetails {
     private String levelOfSkill;
     private boolean isDeleted;
     private boolean isLeader;
+    private TaskEntity task;
     private static Collection<? extends GrantedAuthority> authorities;
 
     public UserDetailsImpl(int id, String email, String name, String password, Role role , CraftEntity craft,
-                           String levelOfSkill, boolean isDeleted,boolean isLeader, Collection<? extends GrantedAuthority> authorities) {
+                           String levelOfSkill, boolean isDeleted,boolean isLeader,TaskEntity task,Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = name;
         this.email = email;
@@ -39,6 +41,7 @@ public class UserDetailsImpl implements UserDetails {
         this.levelOfSkill= levelOfSkill;
         this.isDeleted = isDeleted;
         this.isLeader = isLeader;
+        this.task = task;
         UserDetailsImpl.authorities = authorities;
     }
 
@@ -56,6 +59,7 @@ public class UserDetailsImpl implements UserDetails {
                 userEntity.getLevelOfSkill(),
                 userEntity.isDeleted(),
                 userEntity.isLeader(),
+                userEntity.getTask(),
                 authorities);
     }
 
@@ -72,7 +76,8 @@ public class UserDetailsImpl implements UserDetails {
                 user.getProject(),
                 user.isDeleted(),
                 user.getLevelOfSkill(),
-                user.isLeader());
+                user.isLeader(),
+                user.getTask());
 
     }
 

@@ -37,7 +37,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             if (request.getServletPath().contains("/auth")) {
-                System.out.println("hee");
                 filterChain.doFilter(request, response);
                 return;
             }

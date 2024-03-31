@@ -38,11 +38,18 @@ public class JwtUtils implements UserDetailsService {
      * Generate jwt token from user information
      */
     public String generateTokenFromUserDetails(UserDetailsImpl userDetails) {
-        LOGGER.debug("generateTokenFromUserDetails :: Generating token from user details: " + userDetails);
+        //:(
+        //        LOGGER.debug("generateTokenFromUserDetails :: Generating token from user details: " + userDetails);
+
         Claims claims = Jwts.claims().setSubject(userDetails.getUsername());
+
         claims.put("id", userDetails.getId());
+
         claims.put("email", userDetails.getEmail());
+
         claims.put("role", userDetails.getRole());
+
+
 
         byte[] secretKeyBytes = Base64.getDecoder().decode(jwtSecret);
         SecretKey secretKey = new SecretKeySpec(secretKeyBytes, "HmacSHA256");

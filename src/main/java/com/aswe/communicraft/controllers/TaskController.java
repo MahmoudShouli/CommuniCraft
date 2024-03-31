@@ -16,22 +16,32 @@ public class TaskController {
 
     private final TaskService taskService;
 
-    @PostMapping("/{task_name}")
+    @PostMapping("/{projectName}")
     @PreAuthorize("hasAuthority('CRAFTSMAN')")
-    public ResponseEntity<String> createTask(@RequestBody TaskDto taskDto, @PathVariable String name, HttpServletRequest request) throws NotFoundException {
-        taskService.createTask(taskDto, name, request);
+    public ResponseEntity<String> createTask(@RequestBody TaskDto taskDto, @PathVariable String projectName, HttpServletRequest request) throws NotFoundException {
+        taskService.createTask(taskDto, projectName, request);
 
         return ResponseEntity.ok().body("Task Created Successfully!");
     }
 
 
 
-    @PostMapping("assign/{user_name}")
+    @PostMapping("assign/{userName}")
     @PreAuthorize("hasAuthority('CRAFTSMAN')")
-    public ResponseEntity<String> assignTask(@RequestBody TaskDto taskDto, @PathVariable String name, HttpServletRequest request) throws NotFoundException {
-        taskService.createTask(taskDto, name, request);
+    public ResponseEntity<String> assignTask(@RequestBody TaskDto taskDto, @PathVariable String userName, HttpServletRequest request) throws NotFoundException {
+        taskService.assignTask(taskDto, userName, request);
 
         return ResponseEntity.ok().body("Task Assigned Successfully!");
     }
+
+    @PostMapping("finish/{taskName}")
+    @PreAuthorize("hasAuthority('CRAFTSMAN')")
+    public ResponseEntity<String> finishTask(@PathVariable String taskName, HttpServletRequest request) throws NotFoundException {
+        taskService.finishTask(taskName, request);
+
+        return ResponseEntity.ok().body("Task Finished Successfully!");
+    }
+
+
 
 }

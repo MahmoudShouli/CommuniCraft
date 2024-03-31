@@ -32,9 +32,9 @@ public class ProjectController {
 
 
     @GetMapping(value = "/{project_name}")
-    public ResponseEntity<ProjectDto> findProject(@PathVariable String name) throws NotFoundException {
+    public ResponseEntity<ProjectDto> findProject(@PathVariable String project_name) throws NotFoundException {
 
-        ProjectDto projectDto = projectService.findByName(name);
+        ProjectDto projectDto = projectService.findByName(project_name);
 
         return ResponseEntity.ok(projectDto);
 
@@ -42,8 +42,8 @@ public class ProjectController {
 
     @PostMapping("/join/{project_name}")
     @PreAuthorize("hasAuthority('CRAFTSMAN')")
-    public ResponseEntity<String> joinProject(@PathVariable String name, HttpServletRequest request) throws NotFoundException {
-        projectService.joinProject(name, request);
+    public ResponseEntity<String> joinProject(@PathVariable String project_name, HttpServletRequest request) throws NotFoundException {
+        projectService.joinProject(project_name, request);
 
         return ResponseEntity.ok().body("Joined Project Successfully!");
     }

@@ -18,7 +18,7 @@ public class TaskEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     private String name;
 
 
@@ -29,4 +29,5 @@ public class TaskEntity {
     @JoinColumn(name = "project_id")
     @JsonIgnore
     private ProjectEntity project;
+
 }
