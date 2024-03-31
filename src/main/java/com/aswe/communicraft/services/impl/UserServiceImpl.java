@@ -5,8 +5,10 @@ import com.aswe.communicraft.exceptions.NotFoundException;
 import com.aswe.communicraft.mapper.Mapper;
 import com.aswe.communicraft.models.dto.UserDto;
 import com.aswe.communicraft.models.entities.CraftEntity;
+import com.aswe.communicraft.models.entities.ProjectEntity;
 import com.aswe.communicraft.models.entities.UserEntity;
 import com.aswe.communicraft.repositories.CraftRepository;
+import com.aswe.communicraft.repositories.ProjectRepository;
 import com.aswe.communicraft.repositories.UserRepository;
 import com.aswe.communicraft.security.SecurityConfig;
 import com.aswe.communicraft.services.UserService;
@@ -26,6 +28,7 @@ public class UserServiceImpl implements UserService {
     private final Mapper<UserEntity, UserDto> mapper;
     private final UserRepository userRepository;
     private final CraftRepository craftRepository;
+    private final ProjectRepository projectRepository;
 
     @Override
     public void update(UserDto userDto, int id) throws NotFoundException {
@@ -114,14 +117,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void makeLeader(String name) throws NotFoundException {
-        Optional<UserEntity> user = userRepository.findByUserName(name);
+    public void makeLeader(String userName, String projectName) throws NotFoundException {
+        Optional<UserEntity> user = userRepository.findByUserName(userName);
 
         if (user.isEmpty() || user.get().isDeleted()){
-            throw new NotFoundException("User not exist with name: " + name);
+            throw new NotFoundException("User not exist with name: " + userName);
         }
 
-        userRepository.makeLeader(name);
+        ProjectEntity project = projectRepository.findByName(projectName)
+                .orElseThrow(() -> new NotFoundException("Project not found with name: " + projectName));
+
+        user.get().setProject(project);
+        project.getCraftsmenList().add(user.get());
+
+
+        projectRepository.save(project);
+        userRepository.makeLeader(userName);
     }
 
 
@@ -136,6 +147,8 @@ public class UserServiceImpl implements UserService {
 
         userRepository.softDeleteById(id);
     }
+
+
 
 
 }

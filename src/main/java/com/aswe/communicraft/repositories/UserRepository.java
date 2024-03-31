@@ -18,6 +18,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
     List<UserEntity> findByCraft(CraftEntity craft);
 
+    Optional<UserEntity> findByIsLeaderAndProjectId(boolean isLeader, int projectId);
     @Modifying
     @Transactional
     @Query("UPDATE UserEntity u SET u.isDeleted = true WHERE u.id = :id")

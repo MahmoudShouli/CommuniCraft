@@ -10,9 +10,13 @@ import com.aswe.communicraft.repositories.ProjectRepository;
 import com.aswe.communicraft.repositories.TaskRepository;
 import com.aswe.communicraft.repositories.UserRepository;
 import com.aswe.communicraft.security.JwtUtils;
+import com.aswe.communicraft.services.EmailService;
 import com.aswe.communicraft.services.TaskService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -28,6 +32,7 @@ public class TaskServiceImpl implements TaskService {
     private final ProjectRepository projectRepository;
     private final Mapper<TaskEntity, TaskDto> taskMapper;
     private final TaskRepository taskRepository;
+    private final EmailService emailService;
 
     @Override
     public void createTask(TaskDto taskDto, String name, HttpServletRequest request) throws NotFoundException {
@@ -60,14 +65,18 @@ public class TaskServiceImpl implements TaskService {
 
     }
 
+
     @Override
     public void assignTask(TaskDto taskDto, String userName, HttpServletRequest request) throws NotFoundException {
         String token = request.getHeader("Authorization");
         int id = jwtUtils.getIdFromJwtToken(token);
 
+
+        // this is the leader assigning
         UserEntity LeaderUser = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
 
+        // this is the user being assigned to
         Optional<UserEntity> user = userRepository.findByUserName(userName);
 
         if (user.isEmpty()){
@@ -87,8 +96,15 @@ public class TaskServiceImpl implements TaskService {
             throw new NotFoundException("task not found with this name: " + taskDto.getName());
         }
 
+
         user.get().setTask(task.get());
         userRepository.save(user.get());
+
+        String email = user.get().getEmail();
+        String content = "Hello " + userName + "!\n" +  "You have been assigned to task: " + task.get().getName() + "\n"
+                +  "which belongs to project " + task.get().getProject().getName();
+
+        emailService.sendEmail(email,"CommuniCraft Email Notification",content);
     }
 
     @Override
@@ -107,6 +123,15 @@ public class TaskServiceImpl implements TaskService {
 
         ProjectEntity project = task.get().getProject();
 
+        int projectID = project.getId();
+
+        Optional<UserEntity> leader = userRepository.findByIsLeaderAndProjectId(true, projectID);
+
+        if(leader.isEmpty() || leader.get().isDeleted()) {
+            throw new NotFoundException("No leader found for this project.");
+        }
+
+
         task.get().setFinished(true);
         user.setTask(null);
         project.setNumberOfTasks(project.getNumberOfTasks() -1);
@@ -115,9 +140,18 @@ public class TaskServiceImpl implements TaskService {
             project.setFinished(true);
         }
 
+
         taskRepository.save(task.get());
         projectRepository.save(project);
         userRepository.save(user);
+
+
+        String email = leader.get().getEmail();
+        String content = "Hello leader: " + leader.get().getUserName() + "!\n" +  user.getUserName() + " has finished the task: " +
+                task.get().getName()
+                +  "\nwhich belongs to project " + task.get().getProject().getName();
+
+        emailService.sendEmail(email,"CommuniCraft Email Notification",content);
     }
 
 }
