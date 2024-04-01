@@ -1,8 +1,7 @@
 package com.aswe.communicraft.models.dto;
 
-import com.aswe.communicraft.models.entities.CraftEntity;
+
 import com.aswe.communicraft.models.enums.Role;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 @Setter

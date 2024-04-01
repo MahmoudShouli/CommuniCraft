@@ -3,6 +3,7 @@ package com.aswe.communicraft.services.impl;
 import com.aswe.communicraft.annotations.HidePasswordIfNotAdmin;
 import com.aswe.communicraft.exceptions.NotFoundException;
 import com.aswe.communicraft.mapper.Mapper;
+import com.aswe.communicraft.models.dto.ProjectLeaderDto;
 import com.aswe.communicraft.models.dto.UserDto;
 import com.aswe.communicraft.models.entities.CraftEntity;
 import com.aswe.communicraft.models.entities.ProjectEntity;
@@ -61,9 +62,9 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> findAllUsers() throws NotFoundException {
         List<UserEntity> users = userRepository.findAll();
 
-        if(users.isEmpty()) {
-            LOGGER.error("No any user exist in the system!");
-            throw new NotFoundException("No any user in users table!");
+        if(users.size()==1) {
+            LOGGER.error("No users are in the system at the moment.");
+            throw new NotFoundException("No users are in the system at the moment.");
         }
 
         return users.stream()
@@ -87,7 +88,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto findByUsername(String name) throws NotFoundException {
         Optional<UserEntity> user = userRepository.findByUserName(name);
-        System.out.println(user.get().getUserName());
+
 
         if (user.isEmpty())
             throw new NotFoundException("User not exist with name: " + name);
@@ -99,6 +100,16 @@ public class UserServiceImpl implements UserService {
     @HidePasswordIfNotAdmin
     public List<UserDto> findUsersByCraft(String craft) throws NotFoundException {
         Optional<CraftEntity> craftEntity = craftRepository.findByName(craft);
+
+
+        if(craftEntity.isEmpty()){
+            LOGGER.error("No any craft with this name exist in the system!");
+            throw new NotFoundException("No any craft in craft table!");
+        }
+
+
+
+
         List<UserEntity> users = userRepository.findByCraft(craftEntity.get());
 
         if(users.isEmpty()) {
@@ -106,10 +117,7 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("No any user in users table!");
         }
 
-        if(craftEntity == null){
-            LOGGER.error("No any craft with this name exist in the system!");
-            throw new NotFoundException("No any craft in craft table!");
-        }
+
 
         return users.stream()
                 .filter(user -> !user.isDeleted())
@@ -117,7 +125,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void makeLeader(String userName, String projectName) throws NotFoundException {
+    public void makeLeader(ProjectLeaderDto projectLeaderDto) throws NotFoundException {
+        String userName = projectLeaderDto.getUserName();
+        String projectName = projectLeaderDto.getProjectName();
+
         Optional<UserEntity> user = userRepository.findByUserName(userName);
 
         if (user.isEmpty() || user.get().isDeleted()){
