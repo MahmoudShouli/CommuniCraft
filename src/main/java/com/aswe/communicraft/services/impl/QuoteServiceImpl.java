@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate;
 public class QuoteServiceImpl implements ExternalAPIService {
 
 
-    private final String API_URL = "https://zenquotes.io/api/random/";
+    private static final String API_URL = "https://zenquotes.io/api/random/";
 
     public QuoteResponse getRandomQuote() {
         RestTemplate restTemplate = new RestTemplate();
