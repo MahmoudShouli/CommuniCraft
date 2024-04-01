@@ -6,6 +6,7 @@ import com.aswe.communicraft.mapper.Mapper;
 import com.aswe.communicraft.models.dto.ProjectDto;
 import com.aswe.communicraft.models.entities.*;
 import com.aswe.communicraft.models.enums.Role;
+import com.aswe.communicraft.models.enums.Skill;
 import com.aswe.communicraft.repositories.CraftRepository;
 import com.aswe.communicraft.repositories.ProjectRepository;
 import com.aswe.communicraft.repositories.UserRepository;
@@ -14,6 +15,7 @@ import com.aswe.communicraft.services.EmailService;
 import com.aswe.communicraft.services.ProjectService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -62,6 +64,7 @@ public class ProjectServiceImpl implements ProjectService {
         });
 
         projectEntity.setProjectCrafts(projectCrafts);
+        projectEntity.setProjectSkill(projectDto.getProjectSkill());
         projectRepository.save(projectEntity);
     }
 
@@ -104,6 +107,8 @@ public class ProjectServiceImpl implements ProjectService {
 
         String craftName = user.getCraft().getName();
 
+        Skill skill = user.getLevelOfSkill();
+
         if (project.getProjectCrafts().stream().noneMatch(pc -> pc.getCraft().getName().equals(craftName))) {
             LOGGER.error("This project doesn't require your craft.");
             throw new NotFoundException("This project doesn't require your craft.");
@@ -121,8 +126,10 @@ public class ProjectServiceImpl implements ProjectService {
             throw new NotFoundException("This project is finished.");
         }
 
-
-
+        if(skill != project.getProjectSkill()){
+            LOGGER.error("This project is not matching your Skills :( .");
+            throw new NotFoundException("This project is not matching your Skills :( ");
+        }
 
         user.setProject(project);
         project.getCraftsmenList().add(user);
@@ -137,8 +144,6 @@ public class ProjectServiceImpl implements ProjectService {
 
 
         emailService.sendEmail(email,"CommuniCraft Email Notification",content);
-
-
     }
 
     @Override
@@ -190,6 +195,31 @@ public class ProjectServiceImpl implements ProjectService {
             emailService.sendEmail(emails.get(i),"CommuniCraft Email Notification",content);
         }
 
+    }
+
+    @Override
+    public Optional<List<ProjectDto>> findAllProjects(HttpServletRequest request) throws NotFoundException {
+        String token = request.getHeader("Authorization");
+        int id = jwtUtils.getIdFromJwtToken(token);
+
+        Optional<UserEntity> user = userRepository.findById(id);
+        if (user.isEmpty()){
+            throw new NotFoundException("User not found with id: " + id);
+        }
+
+        Skill skill = user.get().getLevelOfSkill();
+
+        Optional<List<ProjectEntity>> projects = projectRepository.findAllProjectsBySkill(skill);
+
+        List<ProjectDto> projectsDto = projects.get().stream()
+                .map(project -> projectMapper.toDto(project, ProjectDto.class)).toList();
+
+        for (int i=0 ; i<projects.get().size();i++){
+            ProjectEntity project = projects.get().get(i);
+            projectsDto.get(i).setCraftsNeeded(project.getProjectCrafts().stream().map(projectCraft -> projectCraft.getCraft().getName()).toList());
+        }
+
+        return Optional.of(projectsDto);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.aswe.communicraft.models.entities;
 
+import com.aswe.communicraft.models.enums.Skill;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,6 +29,10 @@ public class ProjectEntity {
 
     @Column(nullable = false)
     private boolean isFinished;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Skill projectSkill;
 
     @OneToMany(mappedBy = "project",cascade = CascadeType.ALL)
     private List<UserEntity> craftsmenList;

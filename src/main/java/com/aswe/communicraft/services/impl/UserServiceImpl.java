@@ -8,11 +8,14 @@ import com.aswe.communicraft.models.dto.UserDto;
 import com.aswe.communicraft.models.entities.CraftEntity;
 import com.aswe.communicraft.models.entities.ProjectEntity;
 import com.aswe.communicraft.models.entities.UserEntity;
+import com.aswe.communicraft.models.enums.Role;
 import com.aswe.communicraft.repositories.CraftRepository;
 import com.aswe.communicraft.repositories.ProjectRepository;
 import com.aswe.communicraft.repositories.UserRepository;
+import com.aswe.communicraft.security.JwtUtils;
 import com.aswe.communicraft.security.SecurityConfig;
 import com.aswe.communicraft.services.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,30 +33,39 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final CraftRepository craftRepository;
     private final ProjectRepository projectRepository;
+    private final JwtUtils jwtUtils;
 
     @Override
-    public void update(UserDto userDto, int id) throws NotFoundException {
+    public void update(UserDto userDto, HttpServletRequest request) throws NotFoundException {
+        String token = request.getHeader("Authorization");
+        int id = jwtUtils.getIdFromJwtToken(token);
+
         Optional<UserEntity> userOptional = userRepository.findById(id);
-        Optional<CraftEntity> craftEntity = craftRepository.findByName(userDto.getCraft().getName());
 
         if(userOptional.isEmpty()) {
             LOGGER.error("User with id = " + id + " Not exist!");
             throw new NotFoundException("User with id = " + id + " Not exist!");
         }
 
-        if(craftEntity.isEmpty()){
-            CraftEntity craft = new CraftEntity();
-            craft.setName(userDto.getCraft().getName());
-            craftRepository.save(craft);
+        if(userOptional.get().getRole() == Role.CRAFTSMAN){
+            userOptional.get().setLevelOfSkill(userDto.getLevelOfSkill());
+
+            Optional<CraftEntity> existingCraft = craftRepository.findByName(userDto.getCraft().getName());
+            if(existingCraft.isEmpty()) {
+                CraftEntity newCraft = new CraftEntity();
+                newCraft.setName(userDto.getCraft().getName());
+                userOptional.get().setCraft(newCraft);
+                craftRepository.save(newCraft);
+            }
+            else {
+                userOptional.get().setCraft(existingCraft.get());
+            }
         }
-
-
 
         userOptional.get().setUserName(userDto.getUserName());
         userOptional.get().setEmail(userDto.getEmail());
         userOptional.get().setPassword(securityConfig.passwordEncoder().encode(userDto.getPassword()));
-        userOptional.get().setLevelOfSkill(userDto.getLevelOfSkill());
-        userOptional.get().setCraft(craftEntity.get());
+
 
         userRepository.save(userOptional.get());
     }
@@ -107,17 +119,12 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("No any craft in craft table!");
         }
 
-
-
-
         List<UserEntity> users = userRepository.findByCraft(craftEntity.get());
 
         if(users.isEmpty()) {
             LOGGER.error("No any user exist in the system!");
             throw new NotFoundException("No any user in users table!");
         }
-
-
 
         return users.stream()
                 .filter(user -> !user.isDeleted())
@@ -158,8 +165,6 @@ public class UserServiceImpl implements UserService {
 
         userRepository.softDeleteById(id);
     }
-
-
 
 
 }

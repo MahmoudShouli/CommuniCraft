@@ -16,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/projects")
@@ -26,7 +27,7 @@ public class ProjectController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProjectController.class);
     private final ProjectService projectService;
 
-    @PostMapping()
+    @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> addProject(@Valid @RequestBody ProjectDto projectDto) throws AlreadyExistsException {
 
@@ -36,13 +37,18 @@ public class ProjectController {
     }
 
 
-    @GetMapping(value = "/{project_name}")
-    public ResponseEntity<ProjectDto> findProject(@PathVariable String project_name) throws NotFoundException {
+    @GetMapping(value = "/{projectName}")
+    public ResponseEntity<ProjectDto> findProject(@PathVariable String projectName) throws NotFoundException {
 
-        ProjectDto projectDto = projectService.findByName(project_name);
-        LOGGER.info("finding project: " + project_name);
+        ProjectDto projectDto = projectService.findByName(projectName);
+        LOGGER.info("finding project: " + projectName);
         return ResponseEntity.ok(projectDto);
-
+    }
+    @GetMapping
+    @PreAuthorize("hasAuthority('CRAFTSMAN')")
+    public ResponseEntity<Optional<List<ProjectDto>>> findAllProjects(HttpServletRequest request) throws NotFoundException {
+        Optional<List<ProjectDto>> projects = projectService.findAllProjects(request);
+        return ResponseEntity.ok(projects);
     }
 
     @PostMapping("/join/{projectName}")
