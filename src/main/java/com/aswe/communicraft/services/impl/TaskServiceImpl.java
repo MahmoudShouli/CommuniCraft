@@ -2,6 +2,7 @@ package com.aswe.communicraft.services.impl;
 
 import com.aswe.communicraft.exceptions.NotFoundException;
 import com.aswe.communicraft.mapper.Mapper;
+import com.aswe.communicraft.models.dto.QuoteResponse;
 import com.aswe.communicraft.models.dto.AssignTaskDto;
 import com.aswe.communicraft.models.dto.TaskDto;
 import com.aswe.communicraft.models.entities.ProjectEntity;
@@ -12,6 +13,7 @@ import com.aswe.communicraft.repositories.TaskRepository;
 import com.aswe.communicraft.repositories.UserRepository;
 import com.aswe.communicraft.security.JwtUtils;
 import com.aswe.communicraft.services.EmailService;
+import com.aswe.communicraft.services.ExternalAPIService;
 import com.aswe.communicraft.services.TaskService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,7 @@ public class TaskServiceImpl implements TaskService {
     private final Mapper<TaskEntity, TaskDto> taskMapper;
     private final TaskRepository taskRepository;
     private final EmailService emailService;
+    private final ExternalAPIService externalAPIService;
 
     @Override
     public void createTask(TaskDto taskDto, String name, HttpServletRequest request) throws NotFoundException {
@@ -104,12 +107,16 @@ public class TaskServiceImpl implements TaskService {
         }
 
 
+        QuoteResponse quote = externalAPIService.getRandomQuote();
+
+
         user.get().setTask(task.get());
         userRepository.save(user.get());
 
         String email = user.get().getEmail();
-        String content = "Hello " + user.get().getUserName() + "!\n" +  "You have been assigned to task: " + task.get().getName() + "\n"
-                +  "which belongs to project " + task.get().getProject().getName();
+        String content = "Hello " + userName + "!\n" +  "You have been assigned to task: " + task.get().getName() + "\n"
+                +  "which belongs to project " + task.get().getProject().getName() +
+                 "\n here is a quote to motivate you" + "\u263A : " + "\""+quote.getQuote() +"\""+ " said by : " + quote.getAuthor();
 
         emailService.sendEmail(email,"CommuniCraft Email Notification",content);
     }
