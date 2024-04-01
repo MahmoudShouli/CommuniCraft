@@ -5,6 +5,8 @@ import com.aswe.communicraft.models.dto.TaskDto;
 import com.aswe.communicraft.services.TaskService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class TaskController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskController.class);
     private final TaskService taskService;
 
     @PostMapping("/{projectName}")
@@ -30,7 +33,7 @@ public class TaskController {
     @PreAuthorize("hasAuthority('CRAFTSMAN')")
     public ResponseEntity<String> assignTask(@RequestBody TaskDto taskDto, @PathVariable String userName, HttpServletRequest request) throws NotFoundException {
         taskService.assignTask(taskDto, userName, request);
-
+        LOGGER.info("assigning task: " + taskDto.getName() + "to user: " + userName);
         return ResponseEntity.ok().body("Task Assigned Successfully!");
     }
 
@@ -38,7 +41,7 @@ public class TaskController {
     @PreAuthorize("hasAuthority('CRAFTSMAN')")
     public ResponseEntity<String> finishTask(@PathVariable String taskName, HttpServletRequest request) throws NotFoundException {
         taskService.finishTask(taskName, request);
-
+        LOGGER.info("finishing task: " + taskName);
         return ResponseEntity.ok().body("Task Finished Successfully!");
     }
 

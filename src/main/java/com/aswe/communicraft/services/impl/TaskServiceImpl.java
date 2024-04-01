@@ -14,10 +14,10 @@ import com.aswe.communicraft.services.EmailService;
 import com.aswe.communicraft.services.TaskService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 
 import java.util.Optional;
 
@@ -27,6 +27,7 @@ import java.util.Optional;
 public class TaskServiceImpl implements TaskService {
 
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskServiceImpl.class);
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
@@ -44,6 +45,7 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
 
         if(!user.isLeader()) {
+            LOGGER.error("You must be a leader.");
             throw new NotFoundException(("You must be a leader."));
         }
 
@@ -80,19 +82,23 @@ public class TaskServiceImpl implements TaskService {
         Optional<UserEntity> user = userRepository.findByUserName(userName);
 
         if (user.isEmpty()){
+            LOGGER.error("User not found with id: " + id);
             throw new NotFoundException("User not found with id: " + id);
         }
 
         if(!LeaderUser.isLeader()) {
+            LOGGER.error("You must be a leader.");
             throw new NotFoundException(("You must be a leader."));
         }
 
         if(user.get().getTask() != null){
+            LOGGER.error("the user should finish his task first");
             throw new NotFoundException("the user should finish his task first");
         }
         Optional<TaskEntity> task = taskRepository.findByName(taskDto.getName());
 
         if (task.isEmpty()){
+            LOGGER.error("task not found with this name: " + taskDto.getName());
             throw new NotFoundException("task not found with this name: " + taskDto.getName());
         }
 
@@ -118,6 +124,7 @@ public class TaskServiceImpl implements TaskService {
         Optional<TaskEntity> task = taskRepository.findByName(taskName);
 
         if (task.isEmpty()){
+            LOGGER.error("Task not found with name: " + taskName);
             throw new NotFoundException("Task not found with name: " + taskName);
         }
 
@@ -128,6 +135,7 @@ public class TaskServiceImpl implements TaskService {
         Optional<UserEntity> leader = userRepository.findByIsLeaderAndProjectId(true, projectID);
 
         if(leader.isEmpty() || leader.get().isDeleted()) {
+            LOGGER.error("No leader found for this project.");
             throw new NotFoundException("No leader found for this project.");
         }
 

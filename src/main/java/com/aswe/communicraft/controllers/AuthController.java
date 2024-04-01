@@ -1,7 +1,7 @@
 package com.aswe.communicraft.controllers;
 
 
-import com.aswe.communicraft.exceptions.AlreadyFoundException;
+import com.aswe.communicraft.exceptions.AlreadyExistsException;
 import com.aswe.communicraft.models.dto.LoginDto;
 import com.aswe.communicraft.models.dto.RegisterDto;
 import com.aswe.communicraft.services.AuthService;
@@ -29,10 +29,11 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@Valid @RequestBody RegisterDto registerDto) throws AlreadyFoundException {
+    public ResponseEntity<String> register(@Valid @RequestBody RegisterDto registerDto) throws AlreadyExistsException {
 
         authService.register(registerDto);
 
+        LOGGER.info("registering " + registerDto.getUserName());
         return ResponseEntity.ok().body("User Created Successfully!");
     }
 
