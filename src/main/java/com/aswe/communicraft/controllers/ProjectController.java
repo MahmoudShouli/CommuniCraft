@@ -1,6 +1,7 @@
 package com.aswe.communicraft.controllers;
 
 
+import com.aswe.communicraft.annotations.HidePasswordIfNotAdmin;
 import com.aswe.communicraft.exceptions.AlreadyFoundException;
 import com.aswe.communicraft.exceptions.NotFoundException;
 import com.aswe.communicraft.models.dto.ProjectDto;
@@ -12,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/projects")
@@ -40,12 +43,30 @@ public class ProjectController {
 
     }
 
-    @PostMapping("/join/{project_name}")
+    @PostMapping("/join/{projectName}")
     @PreAuthorize("hasAuthority('CRAFTSMAN')")
-    public ResponseEntity<String> joinProject(@PathVariable String project_name, HttpServletRequest request) throws NotFoundException {
-        projectService.joinProject(project_name, request);
+    public ResponseEntity<String> joinProject(@PathVariable String projectName, HttpServletRequest request) throws NotFoundException {
+        projectService.joinProject(projectName, request);
 
         return ResponseEntity.ok().body("Joined Project Successfully!");
     }
+
+    @GetMapping("/finished")
+    @PreAuthorize("hasAuthority('BUYER')")
+    @HidePasswordIfNotAdmin
+    public ResponseEntity<List<ProjectDto>> findAllFinishedProject() throws NotFoundException {
+        List<ProjectDto> finishedProjects = projectService.findFinishedProject();
+        return ResponseEntity.ok(finishedProjects);
+    }
+
+    @PostMapping ("/finished/buy/{projectName}")
+    @PreAuthorize("hasAuthority('BUYER')")
+    public ResponseEntity<String> buyAProjectByName(@PathVariable String projectName , HttpServletRequest request) throws NotFoundException {
+        projectService.buyAProjectByName(projectName , request);
+        return ResponseEntity.ok("The project bought Successfully!");
+
+    }
+
+
 
 }

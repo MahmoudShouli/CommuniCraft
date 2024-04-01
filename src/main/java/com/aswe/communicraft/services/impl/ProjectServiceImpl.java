@@ -5,6 +5,7 @@ import com.aswe.communicraft.exceptions.NotFoundException;
 import com.aswe.communicraft.mapper.Mapper;
 import com.aswe.communicraft.models.dto.ProjectDto;
 import com.aswe.communicraft.models.entities.*;
+import com.aswe.communicraft.models.enums.Role;
 import com.aswe.communicraft.repositories.CraftRepository;
 import com.aswe.communicraft.repositories.ProjectRepository;
 import com.aswe.communicraft.repositories.UserRepository;
@@ -89,7 +90,6 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
 
-
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
 
@@ -105,10 +105,7 @@ public class ProjectServiceImpl implements ProjectService {
             throw new NotFoundException("User is already in a project");
 
         if(project.isFinished())
-            throw new NotFoundException("This project is finished.");
-
-
-
+            throw new NotFoundException("This project is already finished.");
 
 
         user.setProject(project);
@@ -126,9 +123,57 @@ public class ProjectServiceImpl implements ProjectService {
         emailService.sendEmail(email,"CommuniCraft Email Notification",content);
 
 
+    }
+
+    @Override
+    public List<ProjectDto> findFinishedProject() throws NotFoundException {
+        Optional<List<ProjectEntity>> finishedProjects = projectRepository.findAllFinishedProjects();
+
+        if (finishedProjects.isEmpty()){
+            throw new NotFoundException("There is no finished projects yet");
+        }
+
+        List<ProjectDto> finishedProjectDto = finishedProjects.get().stream()
+                .map(user -> projectMapper.toDto(user, ProjectDto.class)).toList();
+
+        for (int i=0 ; i<finishedProjects.get().size();i++){
+            ProjectEntity project = finishedProjects.get().get(i);
+            finishedProjectDto.get(i).setCraftsNeeded(project.getProjectCrafts().stream().map(projectCraft -> projectCraft.getCraft().getName()).toList());
+        }
+
+        return finishedProjectDto;
 
     }
 
+    @Override
+    public void buyAProjectByName(String projectName, HttpServletRequest request) throws NotFoundException {
+        String token = request.getHeader("Authorization");
+        int id = jwtUtils.getIdFromJwtToken(token);
 
+        ProjectEntity project = projectRepository.findByName(projectName)
+                .orElseThrow(() -> new NotFoundException("Project not found with name: " + projectName));
+
+        Optional<UserEntity> user = userRepository.findById(id);
+
+        if (user.isEmpty()){
+            throw new NotFoundException("User not found with id: " + id);
+        }
+
+        user.get().setProject(project);
+        userRepository.save(user.get());
+
+        Optional<List<UserEntity>> admins = userRepository.findByRole(Role.ADMIN);
+        List<String> emails = new ArrayList<>();
+        String content;
+
+        for (int i=0 ; i<admins.get().size();i++){
+            emails.add(admins.get().get(i).getEmail());
+            content = "Hello Admin: " + admins.get().get(i).getUserName() + "!\n" +  user.get().getUserName() + " has bought your project :" +
+                       project.getName();
+
+            emailService.sendEmail(emails.get(i),"CommuniCraft Email Notification",content);
+        }
+
+    }
 
 }

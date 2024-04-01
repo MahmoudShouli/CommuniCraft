@@ -19,7 +19,6 @@ import java.util.List;
 public class UserController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
-    private final ProjectService projectService;
 
     @PostMapping("/{user_id}")
     public ResponseEntity<String> updateInformation(@PathVariable int id, @RequestBody UserDto userDto) throws NotFoundException {
@@ -67,5 +66,7 @@ public class UserController {
         userService.makeLeader(userName, projectName);
         return ResponseEntity.ok("the user is now a leader");
     }
+
+
 
 }
