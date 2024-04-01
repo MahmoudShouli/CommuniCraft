@@ -30,7 +30,7 @@ public class UserDetailsImpl implements UserDetails {
     private static Collection<? extends GrantedAuthority> authorities;
 
     public UserDetailsImpl(int id, String email, String name, String password, Role role , CraftEntity craft,
-                           String levelOfSkill, boolean isDeleted,boolean isLeader,TaskEntity task,List<MaterialEntity> materials,Collection<? extends GrantedAuthority> authorities) {
+                           Skill levelOfSkill, boolean isDeleted,boolean isLeader,TaskEntity task,List<MaterialEntity> materials,Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = name;
         this.email = email;

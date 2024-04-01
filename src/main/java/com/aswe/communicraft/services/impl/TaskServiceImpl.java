@@ -114,7 +114,7 @@ public class TaskServiceImpl implements TaskService {
         userRepository.save(user.get());
 
         String email = user.get().getEmail();
-        String content = "Hello " + userName + "!\n" +  "You have been assigned to task: " + task.get().getName() + "\n"
+        String content = "Hello " + user.get().getUserName() + "!\n" +  "You have been assigned to task: " + task.get().getName() + "\n"
                 +  "which belongs to project " + task.get().getProject().getName() +
                  "\n here is a quote to motivate you" + "\u263A : " + "\""+quote.getQuote() +"\""+ " said by : " + quote.getAuthor();
 
