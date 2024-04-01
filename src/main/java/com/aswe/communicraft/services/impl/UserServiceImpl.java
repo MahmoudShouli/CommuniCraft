@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
         Optional<UserEntity> userOptional = userRepository.findById(id);
 
         if(userOptional.isEmpty()) {
-            LOGGER.error("User with id = " + id + " Not exist!");
+            LOGGER.error("This user with id = {} not exist ", id);
             throw new NotFoundException("User with id = " + id + " Not exist!");
         }
 
@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userRepository.findById(id).orElse(null);
 
         if(userEntity == null) {
-            LOGGER.error("This user with id = " + id + " not exist!");
+            LOGGER.error("This user with id = {} not exist!", id);
             throw new NotFoundException("This user with id = " + id + " not exist!");
         }
 
@@ -159,7 +159,7 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userRepository.findById(id).orElse(null);
 
         if(userEntity == null) {
-            LOGGER.error("This user with id = " + id + " not exist!");
+            LOGGER.error("This user with id = {} not exist!", id);
             throw new NotFoundException("This user with id = " + id + " not exist!");
         }
 

@@ -21,7 +21,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class MaterialServiceImpl implements MaterialService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MaterialServiceImpl.class);
     private final JwtUtils jwtUtils;
     private final Mapper<MaterialEntity, MaterialDto> mapper;
     private final UserRepository userRepository;

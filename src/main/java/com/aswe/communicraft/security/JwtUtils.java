@@ -38,8 +38,6 @@ public class JwtUtils implements UserDetailsService {
      * Generate jwt token from user information
      */
     public String generateTokenFromUserDetails(UserDetailsImpl userDetails) {
-        //:(
-        //        LOGGER.debug("generateTokenFromUserDetails :: Generating token from user details: " + userDetails);
 
         Claims claims = Jwts.claims().setSubject(userDetails.getUsername());
 

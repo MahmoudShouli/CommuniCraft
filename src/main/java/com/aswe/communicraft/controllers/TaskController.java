@@ -24,7 +24,7 @@ public class TaskController {
     @PreAuthorize("hasAuthority('CRAFTSMAN')")
     public ResponseEntity<String> createTask(@RequestBody TaskDto taskDto, @PathVariable String projectName, HttpServletRequest request) throws NotFoundException {
         taskService.createTask(taskDto, projectName, request);
-
+        LOGGER.info("creating task: {} to project: {}", taskDto.getName(), projectName);
         return ResponseEntity.ok().body("Task Created Successfully!");
     }
 
@@ -34,7 +34,7 @@ public class TaskController {
     @PreAuthorize("hasAuthority('CRAFTSMAN')")
     public ResponseEntity<String> assignTask(@RequestBody AssignTaskDto assignTaskDto, HttpServletRequest request) throws NotFoundException {
         taskService.assignTask(assignTaskDto, request);
-        LOGGER.info("assigning task: " + assignTaskDto.getTaskName() + "to user: " + assignTaskDto.getUserName());
+        LOGGER.info("assigning task: {} to user: {}", assignTaskDto.getTaskName(), assignTaskDto.getUserName());
         return ResponseEntity.ok().body("Task Assigned Successfully!");
     }
 
@@ -42,10 +42,8 @@ public class TaskController {
     @PreAuthorize("hasAuthority('CRAFTSMAN')")
     public ResponseEntity<String> finishTask(HttpServletRequest request) throws NotFoundException {
         taskService.finishTask(request);
-        LOGGER.info("finishing task ");
+        LOGGER.info("finishing task");
         return ResponseEntity.ok().body("Task Finished Successfully!");
     }
-
-
 
 }

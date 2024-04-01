@@ -30,7 +30,7 @@ public class CraftController {
 
         craftService.addCraft(craftDto);
 
-        LOGGER.info("adding craft: " + craftDto.getName());
+        LOGGER.info("adding craft: {}", craftDto.getName());
         return ResponseEntity.ok().body("Craft Created Successfully!");
     }
 

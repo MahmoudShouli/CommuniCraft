@@ -30,6 +30,7 @@ public class SecurityConfig {
     private final AuthEntryPointJwt authEntryPointJwt;
     private final UserRepository userRepository;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final JwtUtils jwtUtils;
 
     /**
      * Used to load user-specific data during authentication
@@ -57,7 +58,7 @@ public class SecurityConfig {
      */
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter();
+        return new AuthTokenFilter(jwtUtils);
     }
 
 

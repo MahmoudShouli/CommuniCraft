@@ -12,8 +12,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QuoteResponse {
-    private String quote; // Quote
-    private String author; // Author
+    private String q;
+    private String a;
 
 }
 

@@ -31,6 +31,7 @@ public class TaskServiceImpl implements TaskService {
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskServiceImpl.class);
+    private static final String AUTHORIZATION = "Authorization";
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
@@ -42,20 +43,24 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void createTask(TaskDto taskDto, String name, HttpServletRequest request) throws NotFoundException {
 
-        String token = request.getHeader("Authorization");
+        String token = request.getHeader(AUTHORIZATION);
         int id = jwtUtils.getIdFromJwtToken(token);
 
         UserEntity user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("User not found "));
 
         if(!user.isLeader()) {
-            LOGGER.error("You must be a leader.");
-            throw new NotFoundException(("You must be a leader."));
+            LOGGER.error("You must be a leader");
+            throw new NotFoundException(("You must be a leader"));
         }
 
 
         ProjectEntity project = projectRepository.findByName(name)
                 .orElseThrow(() -> new NotFoundException("Project not found with name: " + name));
+
+        if (project.isFinished()){
+            throw new NotFoundException("this project is already finished");
+        }
 
 
 
@@ -74,23 +79,23 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void assignTask(AssignTaskDto assignTaskDto, HttpServletRequest request) throws NotFoundException {
-        String token = request.getHeader("Authorization");
+        String token = request.getHeader(AUTHORIZATION);
         int id = jwtUtils.getIdFromJwtToken(token);
 
 
         // this is the leader assigning
-        UserEntity LeaderUser = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
+        UserEntity leaderUser = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         // this is the user being assigned to
         Optional<UserEntity> user = userRepository.findByUserName(assignTaskDto.getUserName());
 
         if (user.isEmpty()){
-            LOGGER.error("User not found with name: " + assignTaskDto.getUserName());
+            LOGGER.error("User not found with name: {}", assignTaskDto.getUserName());
             throw new NotFoundException("User not found with id: " + assignTaskDto.getUserName());
         }
 
-        if(!LeaderUser.isLeader()) {
+        if(!leaderUser.isLeader()) {
             LOGGER.error("You must be a leader.");
             throw new NotFoundException(("You must be a leader."));
         }
@@ -102,8 +107,12 @@ public class TaskServiceImpl implements TaskService {
         Optional<TaskEntity> task = taskRepository.findByName(assignTaskDto.getTaskName());
 
         if (task.isEmpty()){
-            LOGGER.error("task not found with this name: " + assignTaskDto.getTaskName());
+            LOGGER.error("task not found with this name: {}", assignTaskDto.getTaskName());
             throw new NotFoundException("task not found with this name: " + assignTaskDto.getTaskName());
+        }
+
+        if (task.get().isFinished()){
+            throw new NotFoundException("this task is already finished");
         }
 
 
@@ -116,25 +125,20 @@ public class TaskServiceImpl implements TaskService {
         String email = user.get().getEmail();
         String content = "Hello " + user.get().getUserName() + "!\n" +  "You have been assigned to task: " + task.get().getName() + "\n"
                 +  "which belongs to project " + task.get().getProject().getName() +
-                 "\n here is a quote to motivate you" + "\u263A : " + "\""+quote.getQuote() +"\""+ " said by : " + quote.getAuthor();
+                 "\n here is a quote to motivate you" + "☺ : \n" + "\""+quote.getQ() +"\""+ " said by : " + quote.getA();
 
         emailService.sendEmail(email,"CommuniCraft Email Notification",content);
     }
 
     @Override
     public void finishTask(HttpServletRequest request) throws NotFoundException {
-        String token = request.getHeader("Authorization");
+        String token = request.getHeader(AUTHORIZATION);
         int id = jwtUtils.getIdFromJwtToken(token);
 
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
 
         Optional<TaskEntity> task = Optional.of(user.getTask());
-
-        if (task.isEmpty()){
-            LOGGER.error("Task not found ");
-            throw new NotFoundException("Task not found ");
-        }
 
         ProjectEntity project = task.get().getProject();
 

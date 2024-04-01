@@ -25,14 +25,14 @@ public class UserController {
     @PostMapping
     public ResponseEntity<String> updateInformation(HttpServletRequest request, @RequestBody UserDto userDto) throws NotFoundException {
         userService.update(userDto , request);
-        LOGGER.info("updating info for user: " + userDto.getUserName());
+        LOGGER.info("updating info for user: {}", userDto.getUserName());
         return ResponseEntity.ok("User updated successfully.");
     }
 
     @GetMapping("/{userID}")
     public ResponseEntity<UserDto> findById(@PathVariable int userID) throws NotFoundException {
         UserDto userDto = userService.findById(userID);
-        LOGGER.info("finding user with id: " + userID);
+        LOGGER.info("finding user with id: {}", userID);
         return ResponseEntity.ok(userDto);
     }
 
@@ -40,7 +40,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> deleteUser(@PathVariable int userID) throws NotFoundException {
         userService.deleteUser(userID);
-        LOGGER.info("deleting user with id: " + userID);
+        LOGGER.info("deleting user with id: {}", userID);
         return ResponseEntity.ok("User deleted successfully.");
 
     }
@@ -56,14 +56,14 @@ public class UserController {
     @GetMapping("username/{userName}")
     public ResponseEntity<UserDto> findByUsername(@PathVariable String userName) throws NotFoundException {
         UserDto user = userService.findByUsername(userName);
-        LOGGER.info("finding user with username: " + userName);
+        LOGGER.info("finding user with username: {}", userName);
         return ResponseEntity.ok(user);
     }
 
     @GetMapping("/crafts/{craftName}")
     public ResponseEntity<List<UserDto>> findUsersByCraft(@PathVariable String craftName) throws NotFoundException {
         List<UserDto> users = userService.findUsersByCraft(craftName);
-        LOGGER.info("finding user with craft: " + craftName);
+        LOGGER.info("finding user with craft: {}", craftName);
         return ResponseEntity.ok(users);
     }
     @PostMapping("/leader")
@@ -71,7 +71,7 @@ public class UserController {
     public ResponseEntity<String> makeLeader(@RequestBody ProjectLeaderDto projectLeaderDto) throws NotFoundException {
 
         userService.makeLeader(projectLeaderDto);
-        LOGGER.info("making" + projectLeaderDto.getUserName()+ " a leader for project" + projectLeaderDto.getProjectName());
+        LOGGER.info("making {} a leader for project {}", projectLeaderDto.getUserName(), projectLeaderDto.getProjectName());
         return ResponseEntity.ok("the user is now a leader");
     }
 

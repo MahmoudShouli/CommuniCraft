@@ -20,6 +20,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     List<UserEntity> findByCraft(CraftEntity craft);
 
     Optional<UserEntity> findByIsLeaderAndProjectId(boolean isLeader, int projectId);
+
+
     @Modifying
     @Transactional
     @Query("SELECT u FROM UserEntity u WHERE u.role = :role")

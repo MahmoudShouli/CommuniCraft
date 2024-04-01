@@ -32,7 +32,7 @@ public class ProjectController {
     public ResponseEntity<String> addProject(@Valid @RequestBody ProjectDto projectDto) throws AlreadyExistsException {
 
         projectService.addProject(projectDto);
-        LOGGER.info("adding project: " + projectDto.getName());
+        LOGGER.info("adding project: {}", projectDto.getName());
         return ResponseEntity.ok().body("Project Created Successfully!");
     }
 
@@ -41,13 +41,14 @@ public class ProjectController {
     public ResponseEntity<ProjectDto> findProject(@PathVariable String projectName) throws NotFoundException {
 
         ProjectDto projectDto = projectService.findByName(projectName);
-        LOGGER.info("finding project: " + projectName);
+        LOGGER.info("finding project: {}", projectName);
         return ResponseEntity.ok(projectDto);
     }
     @GetMapping
     @PreAuthorize("hasAuthority('CRAFTSMAN')")
     public ResponseEntity<Optional<List<ProjectDto>>> findAllProjects(HttpServletRequest request) throws NotFoundException {
         Optional<List<ProjectDto>> projects = projectService.findAllProjects(request);
+        LOGGER.info("finding all project by skill");
         return ResponseEntity.ok(projects);
     }
 
@@ -55,7 +56,7 @@ public class ProjectController {
     @PreAuthorize("hasAuthority('CRAFTSMAN')")
     public ResponseEntity<String> joinProject(@PathVariable String projectName, HttpServletRequest request) throws NotFoundException {
         projectService.joinProject(projectName, request);
-        LOGGER.info("joining project: " + projectName);
+        LOGGER.info("joining project: {}", projectName);
         return ResponseEntity.ok().body("Joined Project Successfully!");
     }
 
@@ -64,6 +65,7 @@ public class ProjectController {
     @HidePasswordIfNotAdmin
     public ResponseEntity<List<ProjectDto>> findAllFinishedProject() throws NotFoundException {
         List<ProjectDto> finishedProjects = projectService.findFinishedProject();
+        LOGGER.info("finding all finished project");
         return ResponseEntity.ok(finishedProjects);
     }
 
@@ -71,6 +73,7 @@ public class ProjectController {
     @PreAuthorize("hasAuthority('BUYER')")
     public ResponseEntity<String> buyAProjectByName(@PathVariable String projectName , HttpServletRequest request) throws NotFoundException {
         projectService.buyAProjectByName(projectName , request);
+        LOGGER.info("adding project with name: {}", projectName);
         return ResponseEntity.ok("The project bought Successfully!");
 
     }

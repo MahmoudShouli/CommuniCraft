@@ -33,14 +33,14 @@ public class AuthController {
 
         authService.register(registerDto);
 
-        LOGGER.info("registering " + registerDto.getUserName());
+        LOGGER.info("registering {}", registerDto.getUserName());
         return ResponseEntity.ok().body("User Created Successfully!");
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDto loginDto, HttpServletResponse response) {
         String jwt = authService.login(loginDto, response);
-        LOGGER.info("log in user with name: " + loginDto.getUserName());
+        LOGGER.info("log in user with name {}", loginDto.getUserName());
         return ResponseEntity.ok().body("Here is your token:\n " + jwt);
     }
 }

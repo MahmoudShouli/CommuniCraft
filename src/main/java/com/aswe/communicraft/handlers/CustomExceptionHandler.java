@@ -36,12 +36,12 @@ public class CustomExceptionHandler {
 
    @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException e){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("some elements in the request body are not found");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
    }
 
    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
    public ResponseEntity<String> handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException e){
-       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Duplicate entries are not allowed");
+       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
    }
 
 }

@@ -24,11 +24,17 @@ import java.util.List;
  * validates authentication tokens, once per each request.
  */
 @Configuration
+
 public class AuthTokenFilter extends OncePerRequestFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthTokenFilter.class);
 
+
+    private final JwtUtils jwtUtils;
     @Autowired
-    private JwtUtils jwtUtils;
+    public AuthTokenFilter(JwtUtils jwtUtils) {
+        this.jwtUtils = jwtUtils;
+    }
+
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -42,7 +48,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             }
 
             final String authHeader = request.getHeader("Authorization");
-            final String jwt;
 
             if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
                 filterChain.doFilter(request, response);
@@ -55,11 +60,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             Integer userId = jwtUtils.getIdFromJwtToken(authHeader);
             String userRole = jwtUtils.getRoleFromJwtToken(authHeader);
 
-            LOGGER.info("doFilterInternal :: got username = " + username + " with id = " + userId + " and role = " + userRole + " from jwt.");
+            LOGGER.info("doFilterInternal :: got username = {} with id = {} and role = {} from jwt.", username, userId, userRole);
 
             UserDetailsImpl userDetails = (UserDetailsImpl) jwtUtils.loadUserByUsername(username);
             List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(userRole));
-            userDetails.setAuthorities(authorities);
+            UserDetailsImpl.setAuthorities(authorities);
 
             if(jwtUtils.validateJwtToken(authHeader)) {
                 UsernamePasswordAuthenticationToken authentication =

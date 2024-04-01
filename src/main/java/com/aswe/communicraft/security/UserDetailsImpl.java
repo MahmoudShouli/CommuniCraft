@@ -7,11 +7,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
 @Data
-public class UserDetailsImpl implements UserDetails {
+public class UserDetailsImpl implements UserDetails, Serializable {
 
     private int id;
     private String username;
@@ -20,17 +21,17 @@ public class UserDetailsImpl implements UserDetails {
     @JsonIgnore
     private String password;
     private Role role;
-    private CraftEntity craft;
-    private ProjectEntity project;
+    private transient CraftEntity craft;
+    private transient ProjectEntity project;
     private Skill levelOfSkill;
     private boolean isDeleted;
     private boolean isLeader;
-    private TaskEntity task;
-    private List<MaterialEntity> materials;
+    private transient TaskEntity task;
+    private transient List<MaterialEntity> materials;
     private static Collection<? extends GrantedAuthority> authorities;
 
     public UserDetailsImpl(int id, String email, String name, String password, Role role , CraftEntity craft,
-                           Skill levelOfSkill, boolean isDeleted,boolean isLeader,TaskEntity task,List<MaterialEntity> materials,Collection<? extends GrantedAuthority> authorities) {
+                           Skill levelOfSkill, boolean isDeleted,boolean isLeader,TaskEntity task,List<MaterialEntity> materials) {
         this.id = id;
         this.username = name;
         this.email = email;
@@ -43,7 +44,6 @@ public class UserDetailsImpl implements UserDetails {
         this.isLeader = isLeader;
         this.task = task;
         this.materials = materials;
-        UserDetailsImpl.authorities = authorities;
     }
 
     public static UserDetailsImpl build(UserEntity userEntity) {
@@ -61,27 +61,7 @@ public class UserDetailsImpl implements UserDetails {
                 userEntity.isDeleted(),
                 userEntity.isLeader(),
                 userEntity.getTask(),
-                userEntity.getMaterial(),
-                authorities);
-    }
-
-    public static UserEntity build(UserDetailsImpl user) {
-
-        //Create new User from UserDetailsImpl object.
-
-        return new UserEntity(user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getPassword(),
-                user.getRole(),
-                user.getCraft(),
-                user.getProject(),
-                user.isDeleted(),
-                user.getLevelOfSkill(),
-                user.isLeader(),
-                user.getTask(),
-                user.getMaterials());
-
+                userEntity.getMaterial());
     }
 
     public static void setAuthorities(Collection<? extends GrantedAuthority> authorities) {

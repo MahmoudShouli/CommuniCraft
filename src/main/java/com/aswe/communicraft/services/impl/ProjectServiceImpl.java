@@ -15,7 +15,6 @@ import com.aswe.communicraft.services.EmailService;
 import com.aswe.communicraft.services.ProjectService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -30,6 +29,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProjectServiceImpl.class);
+    private static final String AUTHORIZATION = "AUTHORIZATION";
 
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
@@ -86,7 +86,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public void joinProject(String name, HttpServletRequest request) throws NotFoundException {
-        String token = request.getHeader("Authorization");
+        String token = request.getHeader(AUTHORIZATION);
         int id = jwtUtils.getIdFromJwtToken(token);
 
         ProjectEntity project = projectRepository.findByName(name)
@@ -103,7 +103,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 
         UserEntity user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         String craftName = user.getCraft().getName();
 
@@ -154,21 +154,15 @@ public class ProjectServiceImpl implements ProjectService {
             throw new NotFoundException("There is no finished projects yet");
         }
 
-        List<ProjectDto> finishedProjectDto = finishedProjects.get().stream()
-                .map(user -> projectMapper.toDto(user, ProjectDto.class)).toList();
 
-        for (int i=0 ; i<finishedProjects.get().size();i++){
-            ProjectEntity project = finishedProjects.get().get(i);
-            finishedProjectDto.get(i).setCraftsNeeded(project.getProjectCrafts().stream().map(projectCraft -> projectCraft.getCraft().getName()).toList());
-        }
 
-        return finishedProjectDto;
+        return getProjects(finishedProjects);
 
     }
 
     @Override
     public void buyAProjectByName(String projectName, HttpServletRequest request) throws NotFoundException {
-        String token = request.getHeader("Authorization");
+        String token = request.getHeader(AUTHORIZATION);
         int id = jwtUtils.getIdFromJwtToken(token);
 
         ProjectEntity project = projectRepository.findByName(projectName)
@@ -187,6 +181,10 @@ public class ProjectServiceImpl implements ProjectService {
         List<String> emails = new ArrayList<>();
         String content;
 
+        if (admins.isEmpty()){
+            throw new NotFoundException("no admins in the system");
+        }
+
         for (int i=0 ; i<admins.get().size();i++){
             emails.add(admins.get().get(i).getEmail());
             content = "Hello Admin: " + admins.get().get(i).getUserName() + "!\n" +  user.get().getUserName() + " has bought your project :" +
@@ -199,7 +197,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public Optional<List<ProjectDto>> findAllProjects(HttpServletRequest request) throws NotFoundException {
-        String token = request.getHeader("Authorization");
+        String token = request.getHeader(AUTHORIZATION);
         int id = jwtUtils.getIdFromJwtToken(token);
 
         Optional<UserEntity> user = userRepository.findById(id);
@@ -211,6 +209,20 @@ public class ProjectServiceImpl implements ProjectService {
 
         Optional<List<ProjectEntity>> projects = projectRepository.findAllProjectsBySkill(skill);
 
+        if (projects.isEmpty()){
+            throw new NotFoundException("No projects with this skill in the system");
+        }
+
+        List<ProjectDto> projectsDto = getProjects(projects);
+
+
+        return Optional.of(projectsDto);
+    }
+
+    private List<ProjectDto> getProjects(Optional<List<ProjectEntity>> projects) throws NotFoundException {
+        if (projects.isEmpty()){
+            throw new NotFoundException("no Projects found");
+        }
         List<ProjectDto> projectsDto = projects.get().stream()
                 .map(project -> projectMapper.toDto(project, ProjectDto.class)).toList();
 
@@ -218,8 +230,7 @@ public class ProjectServiceImpl implements ProjectService {
             ProjectEntity project = projects.get().get(i);
             projectsDto.get(i).setCraftsNeeded(project.getProjectCrafts().stream().map(projectCraft -> projectCraft.getCraft().getName()).toList());
         }
-
-        return Optional.of(projectsDto);
+        return projectsDto;
     }
 
 }
