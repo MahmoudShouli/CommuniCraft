@@ -1,6 +1,7 @@
 package com.aswe.communicraft.controllers;
 
 import com.aswe.communicraft.exceptions.NotFoundException;
+import com.aswe.communicraft.models.dto.ProjectLeaderDto;
 import com.aswe.communicraft.models.dto.UserDto;
 import com.aswe.communicraft.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,22 +20,26 @@ public class UserController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
 
-    @PostMapping("/{id}")
-    public ResponseEntity<String> updateInformation(@PathVariable int id, @RequestBody UserDto userDto) throws NotFoundException {
-        userService.update(userDto , id);
+
+    @PostMapping("/{userID}")
+    public ResponseEntity<String> updateInformation(@PathVariable int userID, @RequestBody UserDto userDto) throws NotFoundException {
+        userService.update(userDto , userID);
+        LOGGER.info("updating info for user: " + userDto.getUserName());
         return ResponseEntity.ok("User updated successfully.");
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDto> findById(@PathVariable int id) throws NotFoundException {
-        UserDto userDto = userService.findById(id);
+    @GetMapping("/{userID}")
+    public ResponseEntity<UserDto> findById(@PathVariable int userID) throws NotFoundException {
+        UserDto userDto = userService.findById(userID);
+        LOGGER.info("finding user with id: " + userID);
         return ResponseEntity.ok(userDto);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{userID}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<String> deleteUser(@PathVariable int id) throws NotFoundException {
-        userService.deleteUser(id);
+    public ResponseEntity<String> deleteUser(@PathVariable int userID) throws NotFoundException {
+        userService.deleteUser(userID);
+        LOGGER.info("deleting user with id: " + userID);
         return ResponseEntity.ok("User deleted successfully.");
 
     }
@@ -43,26 +48,32 @@ public class UserController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<UserDto>> findAllUsers() throws NotFoundException {
        List<UserDto> users = userService.findAllUsers();
-        LOGGER.info("Get all users in the system.");
+        LOGGER.info("finding all users in the system");
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("username/{name}")
-    public ResponseEntity<UserDto> findByUsername(@PathVariable String name) throws NotFoundException {
-        UserDto user = userService.findByUsername(name);
+    @GetMapping("username/{userName}")
+    public ResponseEntity<UserDto> findByUsername(@PathVariable String userName) throws NotFoundException {
+        UserDto user = userService.findByUsername(userName);
+        LOGGER.info("finding user with username: " + userName);
         return ResponseEntity.ok(user);
     }
 
-    @GetMapping("/crafts/{name}")
-    public ResponseEntity<List<UserDto>> findUsersByCraft(@PathVariable String name) throws NotFoundException {
-        List<UserDto> users = userService.findUsersByCraft(name);
+    @GetMapping("/crafts/{craftName}")
+    public ResponseEntity<List<UserDto>> findUsersByCraft(@PathVariable String craftName) throws NotFoundException {
+        List<UserDto> users = userService.findUsersByCraft(craftName);
+        LOGGER.info("finding user with craft: " + craftName);
         return ResponseEntity.ok(users);
     }
-    @PostMapping("/leader/{name}")
+    @PostMapping("/project_leader")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<String> makeLeader(@PathVariable String name) throws NotFoundException {
-        userService.makeLeader(name);
+    public ResponseEntity<String> makeLeader(@RequestBody ProjectLeaderDto projectLeaderDto) throws NotFoundException {
+
+        userService.makeLeader(projectLeaderDto);
+        LOGGER.info("making" + projectLeaderDto.getUserName()+ " a leader for project" + projectLeaderDto.getProjectName());
         return ResponseEntity.ok("the user is now a leader");
     }
+
+
 
 }

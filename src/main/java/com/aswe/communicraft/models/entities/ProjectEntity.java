@@ -2,12 +2,12 @@ package com.aswe.communicraft.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.util.List;
 
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -21,7 +21,7 @@ public class ProjectEntity {
     private String name;
 
     @Column(nullable = false)
-    private int teamSize;
+    private int availableTeamPositions;
 
     @Column(nullable = false)
     private int numberOfTasks;

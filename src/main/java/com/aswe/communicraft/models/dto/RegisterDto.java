@@ -1,13 +1,11 @@
 package com.aswe.communicraft.models.dto;
 
-import com.aswe.communicraft.models.entities.CraftEntity;
-import com.aswe.communicraft.models.enums.Role;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
+import com.aswe.communicraft.models.enums.Role;
+import lombok.*;
+
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegisterDto {

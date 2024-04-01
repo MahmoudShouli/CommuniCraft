@@ -1,6 +1,7 @@
 package com.aswe.communicraft.services;
 
 import com.aswe.communicraft.exceptions.NotFoundException;
+import com.aswe.communicraft.models.dto.ProjectLeaderDto;
 import com.aswe.communicraft.models.dto.UserDto;
 
 import java.util.List;
@@ -14,5 +15,5 @@ public interface UserService {
     UserDto findByUsername(String name) throws NotFoundException;
 
     List<UserDto> findUsersByCraft(String craft) throws NotFoundException;
-    void makeLeader(String name) throws NotFoundException;
+    void makeLeader(ProjectLeaderDto projectLeaderDto) throws NotFoundException;
 }
