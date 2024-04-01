@@ -2,6 +2,7 @@ package com.aswe.communicraft.services.impl;
 
 import com.aswe.communicraft.exceptions.NotFoundException;
 import com.aswe.communicraft.mapper.Mapper;
+import com.aswe.communicraft.models.dto.AssignTaskDto;
 import com.aswe.communicraft.models.dto.TaskDto;
 import com.aswe.communicraft.models.entities.ProjectEntity;
 import com.aswe.communicraft.models.entities.TaskEntity;
@@ -69,7 +70,7 @@ public class TaskServiceImpl implements TaskService {
 
 
     @Override
-    public void assignTask(TaskDto taskDto, String userName, HttpServletRequest request) throws NotFoundException {
+    public void assignTask(AssignTaskDto assignTaskDto, HttpServletRequest request) throws NotFoundException {
         String token = request.getHeader("Authorization");
         int id = jwtUtils.getIdFromJwtToken(token);
 
@@ -79,11 +80,11 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
 
         // this is the user being assigned to
-        Optional<UserEntity> user = userRepository.findByUserName(userName);
+        Optional<UserEntity> user = userRepository.findByUserName(assignTaskDto.getUserName());
 
         if (user.isEmpty()){
-            LOGGER.error("User not found with id: " + id);
-            throw new NotFoundException("User not found with id: " + id);
+            LOGGER.error("User not found with name: " + assignTaskDto.getUserName());
+            throw new NotFoundException("User not found with id: " + assignTaskDto.getUserName());
         }
 
         if(!LeaderUser.isLeader()) {
@@ -95,11 +96,11 @@ public class TaskServiceImpl implements TaskService {
             LOGGER.error("the user should finish his task first");
             throw new NotFoundException("the user should finish his task first");
         }
-        Optional<TaskEntity> task = taskRepository.findByName(taskDto.getName());
+        Optional<TaskEntity> task = taskRepository.findByName(assignTaskDto.getTaskName());
 
         if (task.isEmpty()){
-            LOGGER.error("task not found with this name: " + taskDto.getName());
-            throw new NotFoundException("task not found with this name: " + taskDto.getName());
+            LOGGER.error("task not found with this name: " + assignTaskDto.getTaskName());
+            throw new NotFoundException("task not found with this name: " + assignTaskDto.getTaskName());
         }
 
 
@@ -107,25 +108,25 @@ public class TaskServiceImpl implements TaskService {
         userRepository.save(user.get());
 
         String email = user.get().getEmail();
-        String content = "Hello " + userName + "!\n" +  "You have been assigned to task: " + task.get().getName() + "\n"
+        String content = "Hello " + user.get().getUserName() + "!\n" +  "You have been assigned to task: " + task.get().getName() + "\n"
                 +  "which belongs to project " + task.get().getProject().getName();
 
         emailService.sendEmail(email,"CommuniCraft Email Notification",content);
     }
 
     @Override
-    public void finishTask(String taskName, HttpServletRequest request) throws NotFoundException {
+    public void finishTask(HttpServletRequest request) throws NotFoundException {
         String token = request.getHeader("Authorization");
         int id = jwtUtils.getIdFromJwtToken(token);
 
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
 
-        Optional<TaskEntity> task = taskRepository.findByName(taskName);
+        Optional<TaskEntity> task = Optional.of(user.getTask());
 
         if (task.isEmpty()){
-            LOGGER.error("Task not found with name: " + taskName);
-            throw new NotFoundException("Task not found with name: " + taskName);
+            LOGGER.error("Task not found ");
+            throw new NotFoundException("Task not found ");
         }
 
         ProjectEntity project = task.get().getProject();

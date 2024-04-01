@@ -2,6 +2,7 @@ package com.aswe.communicraft.repositories;
 
 import com.aswe.communicraft.models.entities.ProjectEntity;
 
+import com.aswe.communicraft.models.enums.Skill;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -16,4 +17,8 @@ public interface ProjectRepository extends JpaRepository<ProjectEntity, Integer>
     @Transactional
     @Query("SELECT p FROM ProjectEntity p WHERE p.isFinished = true")
     Optional<List<ProjectEntity>> findAllFinishedProjects();
+    @Modifying
+    @Transactional
+    @Query("SELECT p FROM ProjectEntity p WHERE p.projectSkill = :skill")
+    Optional<List<ProjectEntity>> findAllProjectsBySkill(Skill skill);
 }

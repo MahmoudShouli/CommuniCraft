@@ -1,6 +1,7 @@
 package com.aswe.communicraft.models.entities;
 
 import com.aswe.communicraft.models.enums.Role;
+import com.aswe.communicraft.models.enums.Skill;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -45,7 +46,8 @@ public class UserEntity {
     private boolean isDeleted;
 
     @Column()
-    private String levelOfSkill;
+    @Enumerated(EnumType.STRING)
+    private Skill levelOfSkill;
 
     @Column(columnDefinition = "boolean default false")
     private boolean isLeader;

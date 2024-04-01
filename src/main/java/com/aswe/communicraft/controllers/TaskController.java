@@ -1,6 +1,7 @@
 package com.aswe.communicraft.controllers;
 
 import com.aswe.communicraft.exceptions.NotFoundException;
+import com.aswe.communicraft.models.dto.AssignTaskDto;
 import com.aswe.communicraft.models.dto.TaskDto;
 import com.aswe.communicraft.services.TaskService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,19 +30,19 @@ public class TaskController {
 
 
 
-    @PostMapping("assign/{userName}")
+    @PostMapping("/assign")
     @PreAuthorize("hasAuthority('CRAFTSMAN')")
-    public ResponseEntity<String> assignTask(@RequestBody TaskDto taskDto, @PathVariable String userName, HttpServletRequest request) throws NotFoundException {
-        taskService.assignTask(taskDto, userName, request);
-        LOGGER.info("assigning task: " + taskDto.getName() + "to user: " + userName);
+    public ResponseEntity<String> assignTask(@RequestBody AssignTaskDto assignTaskDto, HttpServletRequest request) throws NotFoundException {
+        taskService.assignTask(assignTaskDto, request);
+        LOGGER.info("assigning task: " + assignTaskDto.getTaskName() + "to user: " + assignTaskDto.getUserName());
         return ResponseEntity.ok().body("Task Assigned Successfully!");
     }
 
-    @PostMapping("finish/{taskName}")
+    @PostMapping("finish")
     @PreAuthorize("hasAuthority('CRAFTSMAN')")
-    public ResponseEntity<String> finishTask(@PathVariable String taskName, HttpServletRequest request) throws NotFoundException {
-        taskService.finishTask(taskName, request);
-        LOGGER.info("finishing task: " + taskName);
+    public ResponseEntity<String> finishTask(HttpServletRequest request) throws NotFoundException {
+        taskService.finishTask(request);
+        LOGGER.info("finishing task ");
         return ResponseEntity.ok().body("Task Finished Successfully!");
     }
 
