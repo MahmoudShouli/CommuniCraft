@@ -1,6 +1,7 @@
 package com.aswe.communicraft.models.dto;
 
 
+import com.aswe.communicraft.models.enums.Skill;
 import lombok.*;
 
 @Setter
@@ -17,6 +18,6 @@ public class UserDto {
 
     private CraftDto craft;
 
-    private String levelOfSkill;
+    private Skill levelOfSkill;
 
 }

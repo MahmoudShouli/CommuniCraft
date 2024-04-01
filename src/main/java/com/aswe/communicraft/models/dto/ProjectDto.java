@@ -2,6 +2,7 @@ package com.aswe.communicraft.models.dto;
 
 
 import com.aswe.communicraft.models.entities.UserEntity;
+import com.aswe.communicraft.models.enums.Skill;
 import lombok.*;
 
 import java.util.List;
@@ -19,5 +20,6 @@ public class ProjectDto {
 
     private List<String> craftsNeeded;
 
+    private Skill projectSkill;
 
 }

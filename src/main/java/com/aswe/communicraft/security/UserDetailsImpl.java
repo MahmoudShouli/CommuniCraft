@@ -2,6 +2,7 @@ package com.aswe.communicraft.security;
 
 import com.aswe.communicraft.models.entities.*;
 import com.aswe.communicraft.models.enums.Role;
+import com.aswe.communicraft.models.enums.Skill;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,7 +22,7 @@ public class UserDetailsImpl implements UserDetails {
     private Role role;
     private CraftEntity craft;
     private ProjectEntity project;
-    private String levelOfSkill;
+    private Skill levelOfSkill;
     private boolean isDeleted;
     private boolean isLeader;
     private TaskEntity task;
