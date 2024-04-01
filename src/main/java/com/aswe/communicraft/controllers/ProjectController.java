@@ -2,7 +2,6 @@ package com.aswe.communicraft.controllers;
 
 
 import com.aswe.communicraft.annotations.HidePasswordIfNotAdmin;
-import com.aswe.communicraft.exceptions.AlreadyFoundException;
 import com.aswe.communicraft.exceptions.AlreadyExistsException;
 import com.aswe.communicraft.exceptions.NotFoundException;
 import com.aswe.communicraft.models.dto.ProjectDto;
