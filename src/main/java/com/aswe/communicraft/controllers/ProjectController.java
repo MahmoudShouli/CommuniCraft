@@ -2,7 +2,6 @@ package com.aswe.communicraft.controllers;
 
 
 import com.aswe.communicraft.annotations.HidePasswordIfNotAdmin;
-import com.aswe.communicraft.exceptions.AlreadyFoundException;
 import com.aswe.communicraft.exceptions.AlreadyExistsException;
 import com.aswe.communicraft.exceptions.NotFoundException;
 import com.aswe.communicraft.models.dto.ProjectDto;
@@ -48,9 +47,9 @@ public class ProjectController {
 
     @PostMapping("/join/{projectName}")
     @PreAuthorize("hasAuthority('CRAFTSMAN')")
-    public ResponseEntity<String> joinProject(@PathVariable String project_name, HttpServletRequest request) throws NotFoundException {
-        projectService.joinProject(project_name, request);
-        LOGGER.info("joining project: " + project_name);
+    public ResponseEntity<String> joinProject(@PathVariable String projectName, HttpServletRequest request) throws NotFoundException {
+        projectService.joinProject(projectName, request);
+        LOGGER.info("joining project: " + projectName);
         return ResponseEntity.ok().body("Joined Project Successfully!");
     }
 
