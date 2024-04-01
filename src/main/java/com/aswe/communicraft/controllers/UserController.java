@@ -4,6 +4,7 @@ import com.aswe.communicraft.exceptions.NotFoundException;
 import com.aswe.communicraft.models.dto.ProjectLeaderDto;
 import com.aswe.communicraft.models.dto.UserDto;
 import com.aswe.communicraft.services.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +22,9 @@ public class UserController {
     private final UserService userService;
 
 
-    @PostMapping("/{userID}")
-    public ResponseEntity<String> updateInformation(@PathVariable int userID, @RequestBody UserDto userDto) throws NotFoundException {
-        userService.update(userDto , userID);
+    @PostMapping
+    public ResponseEntity<String> updateInformation(HttpServletRequest request, @RequestBody UserDto userDto) throws NotFoundException {
+        userService.update(userDto , request);
         LOGGER.info("updating info for user: " + userDto.getUserName());
         return ResponseEntity.ok("User updated successfully.");
     }
@@ -65,7 +66,7 @@ public class UserController {
         LOGGER.info("finding user with craft: " + craftName);
         return ResponseEntity.ok(users);
     }
-    @PostMapping("/project_leader")
+    @PostMapping("/leader")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> makeLeader(@RequestBody ProjectLeaderDto projectLeaderDto) throws NotFoundException {
 
@@ -73,7 +74,5 @@ public class UserController {
         LOGGER.info("making" + projectLeaderDto.getUserName()+ " a leader for project" + projectLeaderDto.getProjectName());
         return ResponseEntity.ok("the user is now a leader");
     }
-
-
 
 }

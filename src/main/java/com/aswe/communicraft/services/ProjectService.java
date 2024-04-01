@@ -6,6 +6,7 @@ import com.aswe.communicraft.models.dto.ProjectDto;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProjectService {
     void addProject(ProjectDto projectDto) throws AlreadyExistsException;
@@ -16,4 +17,6 @@ public interface ProjectService {
     List<ProjectDto> findFinishedProject() throws NotFoundException;
 
     void buyAProjectByName(String projectName, HttpServletRequest request) throws NotFoundException;
+
+    Optional<List<ProjectDto>> findAllProjects(HttpServletRequest request) throws NotFoundException;
 }

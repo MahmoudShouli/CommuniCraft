@@ -5,6 +5,7 @@ import com.aswe.communicraft.models.entities.ProjectEntity;
 import com.aswe.communicraft.models.entities.TaskEntity;
 import com.aswe.communicraft.models.entities.UserEntity;
 import com.aswe.communicraft.models.enums.Role;
+import com.aswe.communicraft.models.enums.Skill;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,14 +24,14 @@ public class UserDetailsImpl implements UserDetails {
     private Role role;
     private CraftEntity craft;
     private ProjectEntity project;
-    private String levelOfSkill;
+    private Skill levelOfSkill;
     private boolean isDeleted;
     private boolean isLeader;
     private TaskEntity task;
     private static Collection<? extends GrantedAuthority> authorities;
 
     public UserDetailsImpl(int id, String email, String name, String password, Role role , CraftEntity craft,
-                           String levelOfSkill, boolean isDeleted,boolean isLeader,TaskEntity task,Collection<? extends GrantedAuthority> authorities) {
+                           Skill levelOfSkill, boolean isDeleted,boolean isLeader,TaskEntity task,Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = name;
         this.email = email;
