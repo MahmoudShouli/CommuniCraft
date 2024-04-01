@@ -27,9 +27,10 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+/*
+ * The TaskService class provides task-related services.
+ */
 public class TaskServiceImpl implements TaskService {
-
-
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskServiceImpl.class);
     private static final String AUTHORIZATION = "Authorization";
     private final JwtUtils jwtUtils;
@@ -54,7 +55,6 @@ public class TaskServiceImpl implements TaskService {
             throw new NotFoundException(("You must be a leader"));
         }
 
-
         ProjectEntity project = projectRepository.findByName(name)
                 .orElseThrow(() -> new NotFoundException("Project not found with name: " + name));
 
@@ -62,18 +62,13 @@ public class TaskServiceImpl implements TaskService {
             throw new NotFoundException("this project is already finished");
         }
 
-
-
         TaskEntity task = taskMapper.toEntity(taskDto, TaskEntity.class);
-
-
         project.getTasks().add(task);
         task.setProject(project);
         project.setNumberOfTasks(project.getNumberOfTasks()+1);
 
         taskRepository.save(task);
         projectRepository.save(project);
-
     }
 
 
@@ -81,7 +76,6 @@ public class TaskServiceImpl implements TaskService {
     public void assignTask(AssignTaskDto assignTaskDto, HttpServletRequest request) throws NotFoundException {
         String token = request.getHeader(AUTHORIZATION);
         int id = jwtUtils.getIdFromJwtToken(token);
-
 
         // this is the leader assigning
         UserEntity leaderUser = userRepository.findById(id)
@@ -114,14 +108,9 @@ public class TaskServiceImpl implements TaskService {
         if (task.get().isFinished()){
             throw new NotFoundException("this task is already finished");
         }
-
-
         QuoteResponse quote = externalAPIService.getRandomQuote();
-
-
         user.get().setTask(task.get());
         userRepository.save(user.get());
-
         String email = user.get().getEmail();
         String content = "Hello " + user.get().getUserName() + "!\n" +  "You have been assigned to task: " + task.get().getName() + "\n"
                 +  "which belongs to project " + task.get().getProject().getName() +
@@ -151,7 +140,6 @@ public class TaskServiceImpl implements TaskService {
             throw new NotFoundException("No leader found for this project.");
         }
 
-
         task.get().setFinished(true);
         user.setTask(null);
         project.setNumberOfTasks(project.getNumberOfTasks() -1);
@@ -160,11 +148,9 @@ public class TaskServiceImpl implements TaskService {
             project.setFinished(true);
         }
 
-
         taskRepository.save(task.get());
         projectRepository.save(project);
         userRepository.save(user);
-
 
         String email = leader.get().getEmail();
         String content = "Hello leader: " + leader.get().getUserName() + "!\n" +  user.getUserName() + " has finished the task: " +
@@ -173,5 +159,4 @@ public class TaskServiceImpl implements TaskService {
 
         emailService.sendEmail(email,"CommuniCraft Email Notification",content);
     }
-
 }

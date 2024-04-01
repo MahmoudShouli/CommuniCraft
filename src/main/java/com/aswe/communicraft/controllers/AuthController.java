@@ -26,7 +26,12 @@ public class AuthController {
 
     private final AuthService authService;
 
-
+    /**
+     * Handles the registration request.
+     *
+     * @param registerDto  the RegisterDto object containing user registration details
+     * @return ResponseEntity with a success message if user registration is successful
+     */
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@Valid @RequestBody RegisterDto registerDto) throws AlreadyExistsException {
@@ -36,6 +41,14 @@ public class AuthController {
         LOGGER.info("registering {}", registerDto.getUserName());
         return ResponseEntity.ok().body("User Created Successfully!");
     }
+
+    /**
+     * Handles the login request.
+     *
+     * @param loginDto  the LoginDto object containing login credentials
+     * @param response  the HttpServletResponse object to set the response
+     * @return ResponseEntity containing the JWT token if login is successful
+     */
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDto loginDto, HttpServletResponse response) {

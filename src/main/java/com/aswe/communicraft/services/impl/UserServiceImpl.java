@@ -26,6 +26,9 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+/*
+ * The UserService class provides user-related services.
+ */
 public class UserServiceImpl implements UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
     private final SecurityConfig securityConfig;
@@ -34,7 +37,6 @@ public class UserServiceImpl implements UserService {
     private final CraftRepository craftRepository;
     private final ProjectRepository projectRepository;
     private final JwtUtils jwtUtils;
-
     @Override
     public void update(UserDto userDto, HttpServletRequest request) throws NotFoundException {
         String token = request.getHeader("Authorization");
@@ -61,11 +63,9 @@ public class UserServiceImpl implements UserService {
                 userOptional.get().setCraft(existingCraft.get());
             }
         }
-
         userOptional.get().setUserName(userDto.getUserName());
         userOptional.get().setEmail(userDto.getEmail());
         userOptional.get().setPassword(securityConfig.passwordEncoder().encode(userDto.getPassword()));
-
 
         userRepository.save(userOptional.get());
     }
@@ -93,14 +93,12 @@ public class UserServiceImpl implements UserService {
             LOGGER.error("This user with id = {} not exist!", id);
             throw new NotFoundException("This user with id = " + id + " not exist!");
         }
-
         return mapper.toDto(userEntity,UserDto.class);
     }
     @HidePasswordIfNotAdmin
     @Override
     public UserDto findByUsername(String name) throws NotFoundException {
         Optional<UserEntity> user = userRepository.findByUserName(name);
-
 
         if (user.isEmpty())
             throw new NotFoundException("User not exist with name: " + name);
@@ -112,7 +110,6 @@ public class UserServiceImpl implements UserService {
     @HidePasswordIfNotAdmin
     public List<UserDto> findUsersByCraft(String craft) throws NotFoundException {
         Optional<CraftEntity> craftEntity = craftRepository.findByName(craft);
-
 
         if(craftEntity.isEmpty()){
             LOGGER.error("No any craft with this name exist in the system!");
@@ -135,7 +132,6 @@ public class UserServiceImpl implements UserService {
     public void makeLeader(ProjectLeaderDto projectLeaderDto) throws NotFoundException {
         String userName = projectLeaderDto.getUserName();
         String projectName = projectLeaderDto.getProjectName();
-
         Optional<UserEntity> user = userRepository.findByUserName(userName);
 
         if (user.isEmpty() || user.get().isDeleted()){
@@ -147,7 +143,6 @@ public class UserServiceImpl implements UserService {
 
         user.get().setProject(project);
         project.getCraftsmenList().add(user.get());
-
 
         projectRepository.save(project);
         userRepository.makeLeader(userName);
@@ -162,7 +157,6 @@ public class UserServiceImpl implements UserService {
             LOGGER.error("This user with id = {} not exist!", id);
             throw new NotFoundException("This user with id = " + id + " not exist!");
         }
-
         userRepository.softDeleteById(id);
     }
 

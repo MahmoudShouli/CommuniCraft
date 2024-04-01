@@ -20,14 +20,15 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+/*
+ * The MaterialService class provides material-related services.
+ */
 public class MaterialServiceImpl implements MaterialService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MaterialServiceImpl.class);
     private final JwtUtils jwtUtils;
     private final Mapper<MaterialEntity, MaterialDto> mapper;
     private final UserRepository userRepository;
     private final MaterialRepository materialRepository;
-
-
     @Override
     public void addMaterial(MaterialDto materialDto, HttpServletRequest request) throws NotFoundException {
         String token = request.getHeader("Authorization");
@@ -42,7 +43,6 @@ public class MaterialServiceImpl implements MaterialService {
         MaterialEntity material = mapper.toEntity(materialDto,MaterialEntity.class);
         material.setUser(user.get());
         materialRepository.save(material);
-
     }
 
     @Override

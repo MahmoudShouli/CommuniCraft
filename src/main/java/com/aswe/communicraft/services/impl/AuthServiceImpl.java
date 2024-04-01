@@ -28,9 +28,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import java.util.Optional;
 @Service
 @RequiredArgsConstructor
+/*
+ * The AuthService class provides authentication and registration-related services.
+ */
+
 public class AuthServiceImpl implements AuthService {
-
-
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthServiceImpl.class);
 
     private final UserRepository userRepository;
@@ -39,7 +41,6 @@ public class AuthServiceImpl implements AuthService {
     private final SecurityConfig securityConfig;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
-
 
     /**
      * Register new user and save him in the DB

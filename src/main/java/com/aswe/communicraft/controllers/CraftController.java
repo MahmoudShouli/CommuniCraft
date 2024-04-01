@@ -19,11 +19,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/crafts")
 @RequiredArgsConstructor
+
+/*
+  The CraftController class is a REST controller that handles craft-related requests.
+ */
 public class CraftController {
 
     private final CraftService craftService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CraftController.class);
+
+    /**
+     * Handles the request to add a craft to the system.
+     *
+     * @param craftDto  the craftDto object containing craft details
+     * @return ResponseEntity with success message if the craft added successfully
+     */
+
     @PostMapping()
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> addCraft(@Valid @RequestBody CraftDto craftDto) throws AlreadyExistsException {

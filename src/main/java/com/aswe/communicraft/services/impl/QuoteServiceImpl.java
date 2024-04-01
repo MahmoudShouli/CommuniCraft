@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
+/*
+ * The QuoteService class provides Quote-related services.
+ */
 public class QuoteServiceImpl implements ExternalAPIService {
-
-
     private static final String API_URL = "https://zenquotes.io/api/random/";
-
     public QuoteResponse getRandomQuote() {
         RestTemplate restTemplate = new RestTemplate();
         QuoteResponse[] quoteResponses = restTemplate.getForObject(API_URL, QuoteResponse[].class);
@@ -20,5 +20,4 @@ public class QuoteServiceImpl implements ExternalAPIService {
             return null;
         }
     }
-
 }

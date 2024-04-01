@@ -25,20 +25,18 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+/*
+ * The ProjectService class provides Project-related services.
+ */
 public class ProjectServiceImpl implements ProjectService {
-
-
     private static final Logger LOGGER = LoggerFactory.getLogger(ProjectServiceImpl.class);
     private static final String AUTHORIZATION = "AUTHORIZATION";
-
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final CraftRepository craftRepository;
     private final Mapper<ProjectEntity, ProjectDto> projectMapper;
     private final EmailService emailService;
-
-
 
     @Override
     public void addProject(ProjectDto projectDto) throws AlreadyExistsException {
@@ -153,13 +151,8 @@ public class ProjectServiceImpl implements ProjectService {
         if (finishedProjects.isEmpty()){
             throw new NotFoundException("There is no finished projects yet");
         }
-
-
-
         return getProjects(finishedProjects);
-
     }
-
     @Override
     public void buyAProjectByName(String projectName, HttpServletRequest request) throws NotFoundException {
         String token = request.getHeader(AUTHORIZATION);
@@ -192,7 +185,6 @@ public class ProjectServiceImpl implements ProjectService {
 
             emailService.sendEmail(emails.get(i),"CommuniCraft Email Notification",content);
         }
-
     }
 
     @Override
@@ -204,9 +196,7 @@ public class ProjectServiceImpl implements ProjectService {
         if (user.isEmpty()){
             throw new NotFoundException("User not found with id: " + id);
         }
-
         Skill skill = user.get().getLevelOfSkill();
-
         Optional<List<ProjectEntity>> projects = projectRepository.findAllProjectsBySkill(skill);
 
         if (projects.isEmpty()){
@@ -214,7 +204,6 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         List<ProjectDto> projectsDto = getProjects(projects);
-
 
         return Optional.of(projectsDto);
     }
@@ -232,5 +221,4 @@ public class ProjectServiceImpl implements ProjectService {
         }
         return projectsDto;
     }
-
 }
